@@ -1,0 +1,20 @@
+{
+  "说明": "已完成 HIM 原生实验的参数索引，作者程序不会自动读取此文件；不代表统一对比配置。",
+  "算法": "HIM",
+  "作者提交": "24e97779f8882666ab70fd0cf19f72440122db9d",
+  "数据集": "cora_ml",
+  "传播模型": "WIC",
+  "选点方法": "ASW",
+  "种子比例百分比": 10,
+  "种子数量": 281,
+  "传播训练样本数": 30,
+  "训练最大轮次": 200,
+  "训练期间评估次数": 100,
+  "训练随机种子": 42,
+  "最终评估随机种子": 1042,
+  "最终评估次数": 1000,
+  "实际保存轮次": 54,
+  "结果文件": "experiments/results/native/HIM/final_evaluation.json",
+  "本机模型": "methods/HIM/save/cora_ml/1009_150839_HIM_WIC_10.0/model_last_epoch.pt",
+  "最后轮次种子集": "experiments/results/native/HIM/seeds_last_epoch.json"
+}

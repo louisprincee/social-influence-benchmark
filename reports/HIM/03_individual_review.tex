@@ -1,0 +1,103 @@
+% IEEEtran journal layout: two columns. Standalone course-review source.
+% Template: https://www.michaelshell.org/tex/ieeetran/
+% Bibliography overlap with teammates remains to be checked before submission.
+\documentclass[journal]{IEEEtran}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amssymb,booktabs,tabularx}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true,allcolors=black}
+\urlstyle{same}
+\pagestyle{plain}
+\begin{document}
+\title{Learning Social Influence: A Review of Hyperbolic Representations, Seed Selection, and Reproducible Evaluation}
+\author{Liu Shengqi\\Individual Related-Work Review, October 2026}
+\maketitle
+\begin{abstract}
+Influence maximization connects social-network structure, diffusion dynamics, and the selection of a limited set of initial users. This review examines the transition from model-based optimization and local discounting to learned influence representations. It compares classical baselines, the DeepIM family, sheaf neural diffusion, graph neural bandits, and hyperbolic learning. HIM provides the focus for a course reproduction, while related diffusion-prediction research clarifies the opportunities and limits of geometric modeling. Preliminary experiments illustrate why model selection, independent evaluation, and reproducibility must be treated separately. The central argument is that a useful representation must support the quality of an entire seed set, rather than merely identify individually prominent users.
+\end{abstract}
+
+\section{Problem and Review Perspective}
+Influence maximization asks which small group of users should initially receive information if the objective is broad subsequent diffusion. For a graph $G=(V,E)$ and a seed budget $k$, the usual formulation is
+\begin{equation}
+S^*\in\arg\max_{S\subseteq V,\ |S|\leq k}\sigma(S),
+\end{equation}
+where $\sigma(S)$ denotes expected activation under a declared diffusion process. This objective concerns a set: two individually influential users may reach almost the same audience. The problem therefore differs from sorting users by degree, popularity, or a learned node score.
+
+My project contribution is to reproduce HIM and examine its representation and seed-selection choices. This review compares what approaches observe, how they handle redundant reach, and what evidence supports their claims. Twelve publications are discussed, including six published in 2024--2026. Their roles range from foundational optimization to recent learning and temporal diffusion research; they do not all need to be implemented in the course project.
+
+\section{Optimization, Locality, and Redundant Reach}
+Kempe, Kleinberg, and Tardos established an influential formulation under stochastic diffusion models \cite{kempe}. For independent cascade and the standard linear threshold setting, expected spread is monotone and submodular. With an exact influence oracle and a cardinality constraint, greedy selection obtains the $1-1/e$ approximation guarantee. These assumptions matter: the guarantee is not automatically inherited by an arbitrary learned predictor or a finite, noisy simulation procedure.
+
+CELF exploits diminishing returns to reduce unnecessary marginal-gain evaluations \cite{celf}. Its main contribution is computational reuse. Under an identical deterministic objective and tie-breaking rule, lazy evaluation implements greedy selection rather than a different quality objective. Matching Greedy and CELF seed sequences can therefore be an implementation check. Independent Monte Carlo calls for every candidate can obscure that check because changing estimates change apparent gain rankings. Separating oracle construction from selection time also avoids hiding simulation costs.
+
+Degree discount updates local scores after a seed is selected \cite{discount}. In the common small, uniform-probability setting, selected neighbors reduce the estimated usefulness of a candidate. This cheaply addresses overlap without estimating every global marginal gain. Its limitation is the gap between local exposure and multi-hop reach: a bridge between regions may be important despite moderate degree. The lesson for learning methods is that an overlap adjustment can be valuable even after a strong ranking has been obtained. Historical age does not remove the usefulness of degree discount as a clearly specified reference baseline.
+
+\section{Learning Influence and Selecting Sets}
+DeepIM learns a latent representation of seed sets together with a data-driven diffusion model \cite{deepim23}. It links representation learning to combinatorial selection rather than treating node classification as a substitute for influence maximization. Its budget formulation also accommodates node-centrality constraints. The related 2024 Neural Networks publication emphasizes accelerated inference and develops the DeepIM framework further \cite{deepim24}. These publications belong to the same method family; citing both does not constitute two independent confirmations of its performance.
+
+The DeepIM direction raises a practical question: when is learning worth its initial cost? Fast inference can be attractive for repeated decisions, but one graph and one seed budget may not amortize training and supervision generation. My interpretation is that comparisons should report the number of intended deployments and separate training, inference, and evaluation costs. Another question is whether training examples cover the combinations encountered during optimization. Prediction accuracy on familiar seed sets alone does not establish reliable ranking of unfamiliar candidate sets.
+
+DeepSN uses sheaf neural diffusion to model diverse influence patterns and introduces optimization that accounts for overlapping influence \cite{deepsn}. Its significance is the connection between a richer propagation representation and set selection. Compared with a simple ranking, it places more modeling capacity on interactions. However, extra capacity does not itself establish better generalization. A controlled study must align observed history, training graphs, budgets, and evaluation information before attributing a performance difference to representation.
+
+Graph neural bandits address another information regime. Feng, Tan, and Cautis study multi-round campaigns with limited knowledge of network topology \cite{bandit}. Their IM-GNB framework combines exploration and exploitation when choosing influencers and aims to reach distinct users across rounds. It distinguishes learning from fixed historical samples from actively acquiring feedback. Its campaign objective differs from single-shot static selection. An offline HIM experiment cannot establish superiority over a bandit policy without specifying rounds, feedback, and repeated exposure.
+
+\section{Why Hyperbolic Geometry Is Relevant}
+Poincar\'e embeddings represent hierarchical relationships in negatively curved space \cite{poincare}. Their design captures aspects of similarity and hierarchy and uses Riemannian optimization to learn compact representations. Nickel and Kiela subsequently studied hierarchy learning in the Lorentz model, reporting computational and numerical advantages over their Poincar\'e formulation \cite{lorentz}. These works establish geometric tools for hierarchy learning; they do not themselves prove that hyperbolic embeddings optimize social influence.
+
+For social diffusion, the appeal is an inductive bias: users may occupy different influence levels, while nearby users may share audiences. A radial coordinate can support hierarchical ordering and angular position can encode relatedness. Nevertheless, this interpretation is a modeling hypothesis, not a direct measurement of causal persuasion. Dense communities, repeated participation, and sampling bias could also shape the geometry. Evaluation should ask whether geometry improves set outcomes beyond degree-informed initialization and whether any advantage persists outside training conditions.
+
+HIM learns hyperbolic influence representations from social edges and observed propagation activations, then selects seeds using distance information \cite{him}. Its adaptive sliding window (ASW) updates candidate scores to reduce redundant choices. The MD variant selects users with the smallest origin distances. This makes representation learning and overlap-aware selection separately examinable. The model does not require diffusion parameters as direct learning inputs; simulated histories can nevertheless depend on a particular generating mechanism. Diffusion-model-agnostic design should not be read as guaranteed robustness to arbitrary distribution shift.
+
+THGNets offers a nearby but different use of hyperbolic learning \cite{thgnets}. It predicts the next activated user using temporal hypergraphs, social-network structure, and temporal consistency constraints. Its relevance is the treatment of hierarchical and higher-order interactions in diffusion data. Prediction accuracy is not a seed-set optimization guarantee: a model can predict frequent continuations well without identifying complementary initial users. Transferring such a predictor to maximization requires a selection procedure and evaluation of complete cascades.
+
+\begin{table}[t]
+\caption{Different learning settings require different comparisons.}
+\centering\footnotesize
+\begin{tabularx}{\columnwidth}{@{}p{0.22\columnwidth}XX@{}}
+\toprule
+Method family & Main information & Evaluation issue \\
+\midrule
+Greedy/CELF & Specified diffusion oracle & Marginal gains and oracle cost \\
+Degree discount & Local graph statistics & Limited multi-hop information \\
+DeepIM/DeepSN & Training data and graph & Set interactions and training cost \\
+IM-GNB & Sequential feedback & Exploration across campaigns \\
+HIM & Graph and propagation history & Ranking plus overlap \\
+THGNets & Temporal cascades & Prediction, not seed optimization \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{Temporal Structure and Evaluation Limits}
+Yanchenko, Murata, and Holme review temporal influence maximization, including seed activation timing and evolving contacts \cite{temporal}. This matters if our dataset is constructed from timestamped communications. Static aggregation may create a path whose contacts occur in an impossible temporal order. A large static simulated cascade does not demonstrate that the same diffusion could occur within the observed window. A temporal extension must specify activation timing, available past information, and future network uncertainty.
+
+Fair comparison also requires an information boundary. A classical baseline accessing true edge probabilities receives information unavailable to a history-only learner. It can remain useful as a known-parameter reference, but should not be described as an equally informed competitor. Conversely, withholding parameters does not excuse using final evaluation outcomes for repeated tuning. Shared generating parameters, separate evaluation randomness, and identified validation decisions make comparisons interpretable.
+
+\section{Preliminary Reproduction as Methodological Evidence}
+I ran the author implementation on Cora-ML with 2,810 nodes and 7,981 undirected edges, using 30 simulated propagation instances and 281 seeds (10\%). One WIC+ASW run used training seed 42 and stopped at epoch 54. Its highest validation coverage was 38.15\% at epoch 43. Independent evaluation of the saved last-epoch seed set over 1,000 simulations produced mean spread 1,057.107, or 37.6195\% coverage. Reloading the saved model recovered identical seeds; repeating evaluation with seed 1042 reproduced the stored mean and standard deviation exactly.
+
+This supports successful execution and artifact consistency. It does not measure variation across training runs, establish an ASW advantage, or reproduce every paper table. The best validation value and independent result differ partly because the saved checkpoint is from the final executed epoch, not the best validation epoch. Future comparisons should predefine checkpoint selection and preserve the corresponding model and seeds. Scripts reporting only a maximum during training leave this distinction unresolved.
+
+My environment uses macOS CPU execution and compatible dependencies. The diffusion constructor was adjusted to preserve the caller's random stream when no explicit seed is supplied. Caches were checked to avoid reusing a smaller smoke-test sample. These choices support repeatability, but runtime cannot be directly compared with GPU measurements. Observed spread is conditional on the supplied simulation parameters, not evidence that real public opinions changed.
+
+\section{Synthesis and Project Direction}
+The literature suggests three linked requirements: estimate influence from appropriate information, select complementary seeds, and evaluate the entire set transparently. Hyperbolic learning addresses the first through geometric structure; ASW is one attempt at the second. DeepSN and DeepIM offer alternative representation and optimization choices. Bandit and temporal studies identify regimes that a static reproduction does not cover. These are complementary questions rather than a progression in which the newest publication makes earlier methods unnecessary.
+
+The next stage should compare HIM, Greedy, and CELF on a common, documented new dataset, with MD as an ablation and simple ranking controls. Several budgets and multiple training seeds are needed. Training time, selection time, and independent simulation variability should be recorded separately. For HIM, an informative question is whether ASW consistently improves on MD when communities create substantial audience overlap. Negative or mixed results would still identify conditions under which the selection mechanism is useful.
+
+HIM is a suitable reproduction target because its geometric interpretation and modular selection strategy generate specific, testable questions. Present experiments justify beginning the related-work report now; a literature review does not require completed benchmark comparisons. Stronger experimental conclusions should be added only when matched baselines and repeated trials support them.
+
+\begin{thebibliography}{99}
+\bibitem{kempe} D. Kempe, J. Kleinberg, and E. Tardos, ``Maximizing the spread of influence through a social network,'' in \emph{KDD}, pp. 137--146, 2003. \href{https://doi.org/10.1145/956755.956769}{doi: 10.1145/956755.956769}.
+\bibitem{celf} J. Leskovec, A. Krause, C. Guestrin, C. Faloutsos, J. VanBriesen, and N. Glance, ``Cost-effective outbreak detection in networks,'' in \emph{KDD}, pp. 420--429, 2007. \href{https://doi.org/10.1145/1281192.1281239}{doi: 10.1145/1281192.1281239}.
+\bibitem{discount} W. Chen, Y. Wang, and S. Yang, ``Efficient influence maximization in social networks,'' in \emph{KDD}, pp. 199--208, 2009. \href{https://doi.org/10.1145/1557019.1557047}{doi: 10.1145/1557019.1557047}.
+\bibitem{deepim23} C. Ling, J. Jiang, J. Wang, M. T. Thai, R. Xue, J. Song, M. Qiu, and L. Zhao, ``Deep graph representation learning and optimization for influence maximization,'' in \emph{ICML}, PMLR 202, pp. 21350--21361, 2023. \href{https://proceedings.mlr.press/v202/ling23b.html}{Publisher paper}.
+\bibitem{deepim24} T. Chowdhury, C. Ling, J. Jiang, J. Wang, M. T. Thai, and L. Zhao, ``Deep graph representation learning for influence maximization with accelerated inference,'' \emph{Neural Networks}, vol. 180, art. 106649, 2024. \href{https://doi.org/10.1016/j.neunet.2024.106649}{doi: 10.1016/j.neunet.2024.106649}.
+\bibitem{deepsn} A. Hevapathige, Q. Wang, and A. N. Zehmakan, ``DeepSN: A sheaf neural framework for influence maximization,'' in \emph{AAAI}, vol. 39, no. 16, pp. 17177--17185, 2025. \href{https://doi.org/10.1609/aaai.v39i16.33888}{doi: 10.1609/aaai.v39i16.33888}.
+\bibitem{bandit} Y. Feng, V. Y. F. Tan, and B. Cautis, ``Influence maximization via graph neural bandits,'' in \emph{KDD}, pp. 771--781, 2024. \href{https://doi.org/10.1145/3637528.3671983}{doi: 10.1145/3637528.3671983}.
+\bibitem{poincare} M. Nickel and D. Kiela, ``Poincar\'e embeddings for learning hierarchical representations,'' in \emph{NeurIPS}, vol. 30, 2017. \href{https://proceedings.neurips.cc/paper/2017/hash/59dfa2df42d9e3d41f5b02bfc32229dd-Abstract.html}{Publisher paper}.
+\bibitem{lorentz} M. Nickel and D. Kiela, ``Learning continuous hierarchies in the Lorentz model of hyperbolic geometry,'' in \emph{ICML}, PMLR 80, pp. 3779--3788, 2018. \href{https://proceedings.mlr.press/v80/nickel18a.html}{Publisher paper}.
+\bibitem{him} H. Qiao, S. Feng, M. Zhou, X. Li, Y. Ye, F. Li, S. Shang, and Y.-S. Ong, ``Influence strength estimation in hyperbolic space for social influence maximization,'' \emph{IEEE Transactions on Knowledge and Data Engineering}, 2026. \href{https://doi.org/10.1109/TKDE.2026.3683562}{doi: 10.1109/TKDE.2026.3683562}; \href{https://arxiv.org/html/2502.13571v2}{Author manuscript}.
+\bibitem{thgnets} Y. Liu, P. Zhang, W. Song, Y. Zheng, D. Li, L. Shi, and J. Gong, ``THGNets: Constrained temporal hypergraphs and graph neural networks in hyperbolic space for information diffusion prediction,'' in \emph{AAAI}, vol. 39, no. 12, pp. 12220--12228, 2025. \href{https://doi.org/10.1609/aaai.v39i12.33331}{doi: 10.1609/aaai.v39i12.33331}.
+\bibitem{temporal} E. Yanchenko, T. Murata, and P. Holme, ``Influence maximization on temporal networks: A review,'' \emph{Applied Network Science}, vol. 9, art. 16, 2024. \href{https://doi.org/10.1007/s41109-024-00625-3}{doi: 10.1007/s41109-024-00625-3}.
+\end{thebibliography}
+\end{document}

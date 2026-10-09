@@ -1,0 +1,48 @@
+{
+  "source_url": "https://snap.stanford.edu/data/email-Eu-core-temporal.html",
+  "download_url": "https://snap.stanford.edu/data/email-Eu-core-temporal-Dept3.txt.gz",
+  "retrieved": "2026-10-08",
+  "sha256_gzip": "b1f92288e855044bbc74bacac39d42b12e59ec2a0130ad8df419786eb46a7bff",
+  "raw_events": 12216,
+  "first_180d_events": 3514,
+  "raw_self_loops": 0,
+  "time_span_seconds": 69317577,
+  "full": {
+    "n": 89,
+    "m": 1506,
+    "density": 0.19228804902962207,
+    "mean_out_degree": 16.921348314606742,
+    "max_out_degree": 56,
+    "isolates": 0,
+    "weak_components": 1,
+    "largest_weak_component": 89,
+    "zero_out_degree": 10,
+    "reciprocity": 0.7078353253652059
+  },
+  "window_threshold2": {
+    "n": 89,
+    "m": 464,
+    "density": 0.059244126659857,
+    "mean_out_degree": 5.213483146067416,
+    "max_out_degree": 27,
+    "isolates": 15,
+    "weak_components": 16,
+    "largest_weak_component": 74,
+    "zero_out_degree": 27,
+    "reciprocity": 0.603448275862069
+  },
+  "python": "3.14.7",
+  "platform": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+  "configuration": {
+    "k": 5,
+    "p": 0.1,
+    "training_trials": 256,
+    "evaluation_trials": 5000,
+    "training_seed": 20261008,
+    "evaluation_seed": 20261009,
+    "costs": "unit",
+    "threshold": 2,
+    "window_days": 180
+  },
+  "training_bank_seconds": 0.01238512498093769
+}

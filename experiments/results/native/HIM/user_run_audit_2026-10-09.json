@@ -1,0 +1,13 @@
+{
+  "checked_run": "save/cora_ml/1009_150839_HIM_WIC_10.0",
+  "checkpoint_valid": true,
+  "seed_count": 281,
+  "checkpoint_seed_selection_matches": true,
+  "final_evaluation_reproduced_exactly": true,
+  "reevaluated_mean_activated": 1057.107,
+  "reevaluated_std_activated": 32.12138775022025,
+  "reevaluated_coverage_percent": 37.61946619217082,
+  "evaluation_rounds": 1000,
+  "evaluation_rng_seed": 1042,
+  "reevaluation_wall_seconds": 18.424
+}

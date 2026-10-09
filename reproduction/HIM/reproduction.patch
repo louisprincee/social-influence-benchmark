@@ -1,0 +1,28 @@
+diff --git a/modules/diffusion/DiffusionModel.py b/modules/diffusion/DiffusionModel.py
+index 69c7b20..a4bd483 100644
+--- a/modules/diffusion/DiffusionModel.py
++++ b/modules/diffusion/DiffusionModel.py
+@@ -27,7 +27,9 @@ class DiffusionModel(object):
+             :param graph: A networkx graph object
+         """
+ 
+-        np.random.seed(seed)
++        # Keep the caller's RNG stream unless an explicit simulation seed is given.
++        if seed is not None:
++            np.random.seed(seed)
+ 
+         self.discrete_state = True
+ 
+diff --git a/run.py b/run.py
+index c6ef7c6..ab42e3d 100644
+--- a/run.py
++++ b/run.py
+@@ -17,7 +17,7 @@ if __name__ == "__main__":
+ 
+     parser = argparse.ArgumentParser(description="HIM")
+     parser.add_argument('--diffusion_model', default='WLT')
+-    parser.add_argument('--seed_ratio', default=10)
++    parser.add_argument('--seed_ratio', type=float, default=10)
+     parser.add_argument('--random_type', default='random')
+     parser.add_argument('--num_instances', type=int, default=30)
+     parser.add_argument('--epochs', type=int, default=200)

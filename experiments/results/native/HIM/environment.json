@@ -1,0 +1,91 @@
+{
+  "python": "3.12.14 (main, Sep  3 2026, 03:46:19) [Clang 21.1.8 ]",
+  "platform": "macOS-27.0.1-arm64-arm-64bit",
+  "machine": "arm64",
+  "torch": "2.5.1",
+  "geoopt": "0.5.0",
+  "numpy": "1.26.4",
+  "scipy": "1.11.4",
+  "networkx": "3.1",
+  "cuda_available": false,
+  "mps_available": false,
+  "execution_device": "cpu",
+  "datasets": [
+    {
+      "dataset": "cora_ml",
+      "nodes": 2810,
+      "edges": 7981,
+      "directed": false,
+      "ordered_contiguous_ids": true,
+      "WIC": {
+        "prob_id": "20250203_215736_560226",
+        "num_prob_entries": 7981,
+        "min": 0.1000007830758197,
+        "max": 0.19999722984839596
+      },
+      "WLT": {
+        "prob_id": "20250203_224640_765737",
+        "num_prob_entries": 15962,
+        "min": 5.19448756269883e-06,
+        "max": 1.0
+      }
+    },
+    {
+      "dataset": "power_grid",
+      "nodes": 4941,
+      "edges": 6594,
+      "directed": false,
+      "ordered_contiguous_ids": true,
+      "WIC": {
+        "prob_id": "20250204_152748_727681",
+        "num_prob_entries": 6594,
+        "min": 0.10003385467619254,
+        "max": 0.19999502737243335
+      },
+      "WLT": {
+        "prob_id": "20250204_093452_223011",
+        "num_prob_entries": 13188,
+        "min": 4.796993857150054e-05,
+        "max": 1.0
+      }
+    },
+    {
+      "dataset": "facebook",
+      "nodes": 5908,
+      "edges": 41729,
+      "directed": false,
+      "ordered_contiguous_ids": true,
+      "WIC": {
+        "prob_id": "20250204_214238_433083",
+        "num_prob_entries": 41729,
+        "min": 7.35473115487384e-07,
+        "max": 0.09999974520807764
+      },
+      "WLT": {
+        "prob_id": "20250204_153057_345244",
+        "num_prob_entries": 83435,
+        "min": 2.9229510689014684e-07,
+        "max": 1.0
+      }
+    },
+    {
+      "dataset": "github",
+      "nodes": 37700,
+      "edges": 289003,
+      "directed": false,
+      "ordered_contiguous_ids": true,
+      "WIC": {
+        "prob_id": "20250206_202629_788748",
+        "num_prob_entries": 289003,
+        "min": 2.0897898591276665e-06,
+        "max": 0.09999973657654065
+      },
+      "WLT": {
+        "prob_id": "20250204_143242_907443",
+        "num_prob_entries": 578006,
+        "min": 1.1997871074635499e-10,
+        "max": 1.0
+      }
+    }
+  ]
+}

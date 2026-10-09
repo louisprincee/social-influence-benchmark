@@ -1,0 +1,52 @@
+[
+  {
+    "directory": "save/cora_ml/1009_125859_HIM_WIC_10.0",
+    "run_seconds_from_log": 103.0,
+    "best_epoch": 36,
+    "best_validation_coverage_percent": 38.35,
+    "best_validation_mc_std_percent": 1.165,
+    "early_stop_epoch": 47,
+    "last_logged_epoch": 46,
+    "method_recorded_in_log": false
+  },
+  {
+    "directory": "save/cora_ml/1009_130044_HIM_WIC_10.0",
+    "run_seconds_from_log": 105.0,
+    "best_epoch": 38,
+    "best_validation_coverage_percent": 37.96,
+    "best_validation_mc_std_percent": 1.06,
+    "early_stop_epoch": 49,
+    "last_logged_epoch": 48,
+    "method_recorded_in_log": false
+  },
+  {
+    "directory": "save/cora_ml/1009_130230_HIM_WLT_10.0",
+    "run_seconds_from_log": 73.0,
+    "best_epoch": 15,
+    "best_validation_coverage_percent": 39.57,
+    "best_validation_mc_std_percent": 0.772,
+    "early_stop_epoch": 26,
+    "last_logged_epoch": 25,
+    "method_recorded_in_log": false
+  },
+  {
+    "directory": "save/cora_ml/1009_130344_HIM_WLT_10.0",
+    "run_seconds_from_log": 34.0,
+    "best_epoch": 1,
+    "best_validation_coverage_percent": 38.83,
+    "best_validation_mc_std_percent": 0.796,
+    "early_stop_epoch": 12,
+    "last_logged_epoch": 11,
+    "method_recorded_in_log": false
+  },
+  {
+    "directory": "save/cora_ml/1009_150839_HIM_WIC_10.0",
+    "run_seconds_from_log": 120.0,
+    "best_epoch": 43,
+    "best_validation_coverage_percent": 38.15,
+    "best_validation_mc_std_percent": 1.035,
+    "early_stop_epoch": 54,
+    "last_logged_epoch": 53,
+    "method_recorded_in_log": false
+  }
+]

@@ -1,0 +1,9 @@
+[submodule "HIM"]
+	path = methods/HIM
+	url = https://github.com/PlaymakerQ/HIM.git
+[submodule "DeepSN"]
+	path = methods/DeepSN
+	url = https://github.com/Aselahp/DeepSN.git
+[submodule "GBIM"]
+	path = methods/GBIM
+	url = https://github.com/zirui-yuan/GBIM.git

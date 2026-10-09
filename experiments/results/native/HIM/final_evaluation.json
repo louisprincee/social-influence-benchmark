@@ -1,0 +1,15 @@
+{
+  "dataset": "cora_ml",
+  "diffusion_model": "WIC",
+  "method": "ASW",
+  "training_seed": 42,
+  "evaluation_seed": 1042,
+  "last_epoch": 54,
+  "seed_count": 281,
+  "evaluation_target": "last_epoch_seed_set",
+  "evaluation_rounds": 1000,
+  "mean_activated": 1057.107,
+  "std_activated": 32.12138775022025,
+  "spread_ratio_percent": 37.61946619217082,
+  "training_seconds": 120.12197187496349
+}
