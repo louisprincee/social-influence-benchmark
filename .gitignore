@@ -24,3 +24,10 @@ checkpoints/
 *.fls
 *.fdb_latexmk
 *.synctex.gz
+
+# 本地实验检查、作者模型输出和 IDE 缓存
+/methods/HIM/local_checks/
+model_state/
+.vscode/
+.idea/
+.ipynb_checkpoints/

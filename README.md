@@ -1,88 +1,87 @@
 # 社交网络影响力最大化：三人复现项目
 
-本项目用于“社交网络与舆情分析”课程，分别复现 HIM、DeepSN 和 GBIM，再完成共享数据上的实验分析。
+“社交网络与舆情分析”课程项目。三人分别复现 HIM、DeepSN、GBIM，再在共同数据与评估协议下开展比较。
 
-## 三人分工与入口
+## 下载与分工
 
-| 成员 | 算法 | 作者代码 | 环境与指导 | 实验结果 | 报告 |
-|---|---|---|---|---|---|
-| 刘同学 | HIM | [methods/HIM](methods/HIM) | [HIM 复现指南](reproduction/HIM/README.md) | [HIM 成果](experiments/results/native/HIM/README.md) | [reports/HIM](reports/HIM) |
-| 李同学 | DeepSN | [methods/DeepSN](methods/DeepSN) | [DeepSN 复现指南](reproduction/DeepSN/README.md) | 运行后存入 experiments/results/native/DeepSN | 运行后存入 reports/DeepSN |
-| 姜来同学 | GBIM | [methods/GBIM](methods/GBIM) | [GBIM 复现指南](reproduction/GBIM/README.md) | 运行后存入 experiments/results/native/GBIM | 运行后存入 reports/GBIM |
+```bash
+git clone https://github.com/louisprincee/social-influence-benchmark.git
+cd social-influence-benchmark
+```
 
-所有方法目录采用原方法的名称：**HIM、DeepSN、GBIM**。本文件与团队指导文档中的路径都相对于团队仓库根目录。
+三个方法都是普通目录，代码已随团队仓库保存。修改后直接用团队仓库的 `git add`、`git commit`、`git push` 提交。
 
-## 清晰的目录分工
+| 成员 | 方法与运行入口 | 中文操作指南 | 已完成状态 |
+|---|---|---|---|
+| 刘同学 | [methods/HIM/run.py](methods/HIM/run.py) | [HIM 复现指南](methods/HIM/复现指南.md) | Mac CPU 环境、训练、保存模型及独立评估已验证 |
+| 李同学 | [methods/DeepSN/model.py](methods/DeepSN/model.py) | [DeepSN 复现指南](methods/DeepSN/复现指南.md) | 源码已准备；团队环境与训练待验证 |
+| 姜来同学 | [methods/GBIM/main.py](methods/GBIM/main.py) | [GBIM 复现指南](methods/GBIM/复现指南.md) | 源码已准备；团队环境与训练待验证 |
+
+## 文件放在哪里
 
 ```text
 social-influence-benchmark/
-├── methods/                       # 直接进入作者代码
-│   ├── HIM/                       # 入口 run.py；本机包含已迁移的实验
-│   ├── DeepSN/                    # 入口 model.py
-│   └── GBIM/                      # 作者入口 GBIM/main.py
-├── reproduction/                  # 三人分别维护环境、补丁和复现指南
-│   ├── HIM/
-│   ├── DeepSN/
-│   └── GBIM/
-├── data/                          # 团队共享数据
-│   ├── manifests/                 # 来源、哈希、处理规则与统计
-│   ├── tools/                     # 数据处理工具的职责说明，代码待实现
-│   ├── raw/                       # 本地原始数据，Git 忽略
-│   └── processed/                 # 本地处理数据，Git 忽略
-├── experiments/                   # 团队共用的实验协议与工具
-│   ├── configs/                   # 配置说明及 HIM 已完成实验的参数记录
-│   ├── evaluation/                # 评估协议，代码待实现
-│   ├── scripts/                   # 脚本入口说明，公共脚本待实现
-│   └── results/
-│       ├── native/HIM/            # 已验证的 HIM 结果、审计及文件清单
-│       └── benchmark/             # 统一比较的准入说明，暂无对比结果
-├── reports/HIM/                   # 英文个人综述与参考文献
-└── docs/                          # 中文结构说明与三人协作指南
+├── README.md                  # 团队入口、分工与协作约定
+├── UPSTREAM.md                # 作者来源、原始版本与本地修改
+├── methods/
+│   ├── HIM/                   # 源码、中文指南、Mac 依赖文件
+│   ├── DeepSN/                # 源码、中文指南
+│   └── GBIM/                  # 源码、中文指南；main.py 直接在这里
+├── data/                      # 共享数据说明与已有邮件网络统计
+├── results/HIM/               # 已有结果 JSON、种子集与检查记录
+└── reports/HIM/               # 英文个人综述及参考文献
 ```
 
-目录不再使用空的 `.gitkeep`。Git 不保存空目录，原先这些文件只用于保留规划的目录；现在每个规划目录都通过中文 README 解释其职责与完成状态，不会误认为已有工具。
+各自的虚拟环境放 `methods/方法名/.venv`，结果放 `results/方法名/`，报告放 `reports/方法名/`。DeepSN、GBIM 首次产生成果时再创建对应结果、报告目录。共享处理脚本或评估代码实际写出后再添加，没有预建空壳目录或通用配置框架。
 
-## 刘同学已有 HIM 成果
+GitHub 包含源码、指南、小型结果和报告。数据包、模型、缓存、日志及虚拟环境默认留在本机，其他电脑按各自指南下载数据、建立环境。
 
-此前工作已完整保留。本机的 `methods/HIM` 已应用两项复现修正，并同步了原目录的 `data`、`configs`、`save` 和 `local_checks`；73 个文件已逐一核对 SHA-256。原独立 HIM 目录仍是备份。
+## 刘同学已有成果
 
-- 已验证的最后轮次模型、种子集、完整日志：`methods/HIM/save/cora_ml/1009_150839_HIM_WIC_10.0/`。
-- 团队可提交的结果与审计：[experiments/results/native/HIM](experiments/results/native/HIM/README.md)。
-- 代码修正：[reproduction/HIM/reproduction.patch](reproduction/HIM/reproduction.patch)。
-- 环境入口：`reproduction/HIM/.venv`。在刘同学本机，它通过本地软链接使用原环境，没有移动或重装虚拟环境。
-- 已验证结果：WIC + ASW，281 个种子，最后轮次为 54，独立 1000 次模拟覆盖率 **37.619466%**。这是可以写入报告的单次训练结果，不是三方法排名。
+HIM 的原数据、配置、缓存、日志、模型和检查文件继续保存在 `methods/HIM`；73 个文件有 [SHA-256 清单](results/HIM/artifact_manifest.json)。原独立 HIM 目录仍保留备份。
 
-**本机保存与 GitHub 上传不同：**数据、训练缓存、模型权重和虚拟环境保存在本机，默认不进入 Git 提交。GitHub 会保存结果 JSON、清单、补丁、环境版本和报告。其他成员下载后需按照指南准备环境和数据；如需这个已训练模型，应另行同步该运行目录中的权重文件。
+- 最后轮次模型：`methods/HIM/save/cora_ml/1009_150839_HIM_WIC_10.0/model_last_epoch.pt`（本机保存，需要时单独共享）。
+- [已验证结果与解释](results/HIM/README.md)：Cora-ML、WIC + ASW、281 个种子，1000 次独立模拟覆盖率 **37.619466%**。
+- [英文个人综述](reports/HIM/03_individual_review.tex)。
 
-## 下载与首次开始
+刘同学在当前电脑继续运行，从团队根目录执行：
 
 ```bash
-git clone --recurse-submodules https://github.com/louisprincee/social-influence-benchmark.git
-cd social-influence-benchmark
-git submodule update --init --recursive
-```
-
-这三个方法是固定版本的 Git 子模块。点击方法目录就是作者仓库，不再包含团队添加的包装层。GBIM 自带的内层 `GBIM` 目录属于作者原结构。
-
-然后根据自己的方法打开上面的中文复现指南。三个方法使用独立环境，不共用一个 requirements 文件。
-
-刘同学在**当前这台电脑**可以直接从团队根目录进入已有环境和代码：
-
-```bash
-source reproduction/HIM/.venv/bin/activate
+source methods/HIM/.venv/bin/activate
 cd methods/HIM
-python --version
 ```
 
-这一步不会重新训练，也不会清空已有结果。具体实验命令见 [HIM 详细指南](reproduction/HIM/复现实验指南.md)。
+本机环境是指向原独立 HIM 环境的软链接；保留原环境目录即可继续使用。源码中的两项复现修正已直接保存，组员无需另行应用补丁。
 
-## 实验如何独立开展，再汇总
+## 三人如何协作
 
-1. 各自先完成作者协议下的复现，代码修改保存成 `reproduction/方法名/` 下的补丁。
-2. 各自的原生结果存到 `experiments/results/native/方法名/`；每次运行保留参数、随机种子、日志和种子集。
-3. 共同确定新数据集、节点映射、传播模型、种子预算和评估协议。
-4. 对齐任务后，统一重评估的结果才进入 `experiments/results/benchmark/`。
+首次开始自己的实验时建立分支，例如：
 
-DeepSN 与 GBIM 的团队环境和训练尚未验证。DeepSN 默认 SIS 且入口忽略命令行参数；GBIM 优化用户—信息种子对，不能直接拿其 Multi-IC/Multi-LT 数值与 HIM 的普通用户种子覆盖率排名。详细问题见各自指南。
+```bash
+git switch -c li-deepsn
+```
 
-[三人协作与提交指南](docs/三人协作与提交指南.md)说明分支、子模块补丁、文件存放和课程材料要求。
+每次开始前同步团队主分支：
+
+```bash
+git fetch origin
+git merge origin/main
+```
+
+完成一项可复查的工作后，提交实际修改的文件（将路径、分支名替换成自己的）：
+
+```bash
+git add methods/DeepSN/复现指南.md methods/DeepSN/model.py
+git commit -m "记录 DeepSN 复现步骤并修正参数入口"
+git push -u origin li-deepsn
+```
+
+在 GitHub 创建 Pull Request 合并到 main。共享 `data/` 的规则先在组内对齐；不要替他人调整环境。每次实验记录数据版本、完整命令、依赖版本、随机种子、传播参数、种子集合、运行时间及评估结果。权重和完整日志另行共享，小型结果提交到各自结果目录。
+
+## 统一实验与课程要求
+
+先分别完成作者协议下的复现。共同确定新数据集、节点映射、图方向、传播模型、种子预算和独立评估的随机种子后，再做横向比较。原生结果与统一重评估结果分别标明实验设置，可放在同一方法结果目录的不同运行文件夹中。
+
+DeepSN 默认使用 SIS，且入口忽略命令行参数。GBIM 优化的是用户—信息种子对，目标与 HIM 的普通用户覆盖率不同；完成任务适配并验证后才可横向排名。详见各自指南。
+
+老师要求至少三种算法在新的有趣数据集上比较，目前尚未完成这一部分；[邮件网络数据说明](data/README.md)是已有候选。Milestone 为 3–5 页；个人英文综述至少 1000 词、至少 10 篇文献，其中近三年至少 5 篇，与任一其他组员重复文献不超过 3 篇。报告只写实际完成的实验，LaTeX 使用双栏。
