@@ -1,0 +1,99 @@
+{
+  "dataset": "Ciao",
+  "retrieved_on": "2026-10-11",
+  "source_page": "https://www.cse.msu.edu/~tangjili/datasetcode/truststudy.htm",
+  "source_description": "The dataset page says the Ciao/Epinions collections were crawled in May 2011 and that the downloadable files are partial releases used in the cited papers.",
+  "temporal_coverage": "The baseline MAT archive has no rating timestamps, and trust links have no establishment timestamps. A separate rating-timestamp release exists but is a smaller package and is not mixed into this snapshot.",
+  "reuse_status": "The source page and accompanying README do not state an explicit license or redistribution permission. Keep the raw data local, cite the source, do not redistribute it, and confirm course-use expectations before any public release.",
+  "archives": {
+    "baseline": {
+      "url": "https://www.cse.msu.edu/~tangjili/datasetcode/ciao.zip",
+      "bytes": 1275594,
+      "sha256": "dee78c18b4a0843791e82b522f632a1166296e6048537b13b18c281a12e8f741",
+      "retained_contents": [
+        "ciao/rating.mat",
+        "ciao/trustnetwork.mat"
+      ]
+    },
+    "timestamped_text_variant_excluded": {
+      "url": "https://www.cse.msu.edu/~tangjili/datasetcode/ciao_with_rating_timestamp_txt.zip",
+      "bytes": 563373,
+      "sha256": "b8e2ca34c09f3266f1b22c0ae4c35a0480f9dce70c4f6ca40355e620d021652d",
+      "contents_and_rows": {
+        "trust.txt": 57544,
+        "rating_with_timestamp.txt": 36065
+      },
+      "exclusion_reason": "This is a substantially smaller, separately packaged release than the baseline MAT archive. Its records were not verified as an aligned extension of the baseline; do not merge the two releases."
+    }
+  },
+  "source_files": {
+    "rating.mat": {
+      "mat_variable": "rating",
+      "shape": [
+        284086,
+        5
+      ],
+      "columns": [
+        "user_id",
+        "product_id",
+        "category_id",
+        "rating",
+        "helpfulness"
+      ],
+      "sha256": "aa793568686285a93286ba9e56954fcce347370ad2e58c785760362ab12d2c2c"
+    },
+    "trustnetwork.mat": {
+      "mat_variable": "trustnetwork",
+      "shape": [
+        111781,
+        2
+      ],
+      "columns": [
+        "trustor_user_id",
+        "trusted_user_id"
+      ],
+      "sha256": "0a8963ed22e6b534ce8d14e478f54ce0af6f5a3440a67ed5a35e62486580ce3a"
+    }
+  },
+  "audited_counts": {
+    "ratings": {
+      "source_rows": 284086,
+      "unique_users": 7375,
+      "unique_products": 105114,
+      "unique_categories": 28,
+      "rating_min": 0,
+      "rating_max": 5,
+      "duplicate_user_product_rows": 1436,
+      "exact_duplicate_rows": 652
+    },
+    "trust_network": {
+      "directed_arcs": 111781,
+      "duplicate_directed_arcs": 0,
+      "self_loops": 0,
+      "unique_users": 7317,
+      "undirected_projection_edges": 85205,
+      "undirected_components": 7,
+      "largest_component_nodes": 7305,
+      "isolated_nodes": 0
+    },
+    "overlap": {
+      "rating_users_in_trust_graph": 7317,
+      "rating_only_users_excluded_from_shared_graph": 58,
+      "source_rating_rows_from_users_outside_trust_graph": 766
+    },
+    "gbim_author_preprocessing_reference": {
+      "rule": "Deduplicate user-product pairs by keeping the first source row, discard rows whose user is outside the trust graph, and discard rating 0.",
+      "rows_after_pair_deduplication": 282650,
+      "rows_after_all_filters": 281865,
+      "mapped_users": 7317,
+      "mapped_products": 104957
+    }
+  },
+  "shared_graph_policy": {
+    "canonical_ids": "Sort original trust-network user IDs and map them to contiguous zero-based indices.",
+    "preserve_direction": "Retain the source trustor-to-trusted direction in the canonical directed edge file.",
+    "user_level_methods": "Use the undirected projection with duplicate unordered pairs collapsed for HIM and DeepSN; the GBIM repository also symmetrizes trust edges in its Ciao preprocessing.",
+    "ratings": "Keep source ratings, duplicate rows, zero ratings, and source row order for users in the trust graph in the canonical export. Apply GBIM-specific filtering only in its method adapter."
+  },
+  "interpretation_limit": "Ciao ratings and trust links are not observed information-diffusion cascades. User-level diffusion results on this topology must be described as performance under a declared synthetic cascade generator, not as measured real-world opinion adoption."
+}

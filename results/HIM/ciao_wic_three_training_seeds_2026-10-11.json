@@ -1,0 +1,90 @@
+{
+  "dataset": "ciao",
+  "diffusion_model": "WIC",
+  "probability_id": "ciao_symmetric_weighted_cascade_v1_f2fc09305d5f",
+  "nodes": 7317,
+  "undirected_edges": 85205,
+  "training_instances_per_run": 30,
+  "seed_budget": 366,
+  "evaluation_seed_base": 1042,
+  "evaluation_rounds_per_method_per_training_seed": 1000,
+  "training_seeds": [42, 43, 44],
+  "runs": [
+    {
+      "training_seed": 42,
+      "selected_checkpoint_epoch": 28,
+      "stopped_after_epoch": 39,
+      "checkpoint_sha256": "f41a3c0b21caea165d3e7fbe9d8d2e6776e4deb595c0bc1695b18760e9c9ceb6",
+      "training_cache_sha256": "82c6a4b78c3e09a25feea8711ca2aa0cf5fb25e05069dea73159d0edbe3c2ca1",
+      "ASW_mean_activated": 733.197,
+      "MD_mean_activated": 732.357,
+      "paired_difference_activated": 0.84,
+      "ASW_coverage_percent": 10.020459204592045,
+      "MD_coverage_percent": 10.008979089790898,
+      "paired_difference_coverage_percentage_points": 0.011480114801148012,
+      "evaluation_artifact": "paired_selection_ciao_wic_train30_seed42_2026-10-11.json"
+    },
+    {
+      "training_seed": 43,
+      "selected_checkpoint_epoch": 19,
+      "stopped_after_epoch": 30,
+      "checkpoint_sha256": "259646c8379ad2d4240b71fbefbc03351a341b5874de0ff3be02920e011970a0",
+      "training_cache_sha256": "a57d9e08e6fb10372a2fa7455b49906c5becc1055a9f338cb3d61d08d242146e",
+      "ASW_mean_activated": 733.631,
+      "MD_mean_activated": 733.151,
+      "paired_difference_activated": 0.48,
+      "ASW_coverage_percent": 10.026390597239304,
+      "MD_coverage_percent": 10.019830531638648,
+      "paired_difference_coverage_percentage_points": 0.006560065600656006,
+      "evaluation_artifact": "paired_selection_ciao_wic_train30_seed43_2026-10-11.json"
+    },
+    {
+      "training_seed": 44,
+      "selected_checkpoint_epoch": 26,
+      "stopped_after_epoch": 37,
+      "checkpoint_sha256": "78b5ffc1400e86d33b21ddc61256c2eb7cb51d7799d6e15db75b0597f358c909",
+      "training_cache_sha256": "3d48d412bd2421611b03fa5a8ca01eb6a98c1a7338b6b6f57b2ee22ce130f2f2",
+      "ASW_mean_activated": 738.273,
+      "MD_mean_activated": 738.479,
+      "paired_difference_activated": -0.206,
+      "ASW_coverage_percent": 10.089831898318984,
+      "MD_coverage_percent": 10.092647259805933,
+      "paired_difference_coverage_percentage_points": -0.0028153614869482024,
+      "evaluation_artifact": "paired_selection_ciao_wic_train30_seed44_2026-10-11.json"
+    }
+  ],
+  "summary_across_training_seeds": {
+    "ASW_mean_activated": {
+      "mean": 735.0336666666667,
+      "sample_standard_deviation": 2.8137251701851493,
+      "ci95_t_df2": [728.0439858606641, 742.0233474726693]
+    },
+    "MD_mean_activated": {
+      "mean": 734.6623333333333,
+      "sample_standard_deviation": 3.3290865614059406,
+      "ci95_t_df2": [726.3924238601743, 742.9322428064924]
+    },
+    "paired_ASW_minus_MD_activated": {
+      "mean": 0.3713333333333333,
+      "sample_standard_deviation": 0.5313994103622371,
+      "ci95_t_df2": [-0.9487359819955747, 1.6914026486622413]
+    },
+    "ASW_coverage_percent": {
+      "mean": 10.045560566716778,
+      "sample_standard_deviation": 0.038454628538816406,
+      "ci95_t_df2": [9.950033973768813, 10.141087159664744]
+    },
+    "MD_coverage_percent": {
+      "mean": 10.040485627078493,
+      "sample_standard_deviation": 0.045497971318927986,
+      "ci95_t_df2": [9.927462400713054, 10.153508853443931]
+    },
+    "paired_ASW_minus_MD_coverage_percentage_points": {
+      "mean": 0.0050749396382852715,
+      "sample_standard_deviation": 0.007262531233596244,
+      "ci95_t_df2": [-0.012966188082487014, 0.02311606735905756]
+    }
+  },
+  "interpretation": "This is an initial three-training-seed comparison conditional on one static trust graph and one synthetic weighted-cascade probability bank. The confidence intervals across training seeds use a t distribution with only 2 degrees of freedom and are very imprecise. The paired ASW-minus-MD interval includes zero; no selector superiority or real-world adoption claim is supported.",
+  "protocol": "For each trained checkpoint, evaluate the ASW and MD seed sets for 1,000 replicates. Reset Python and NumPy to the same replicate-specific seed for both methods, while keeping the fixed edge-probability bank. This aligns initial pseudorandom streams but is not an edge-by-edge coupling guarantee."
+}

@@ -15,6 +15,7 @@ venv/
 *.ckpt
 *.zip
 *.SG
+/methods/HIM/HIM.pdf
 save/
 checkpoints/
 

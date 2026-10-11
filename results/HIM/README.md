@@ -14,6 +14,9 @@
 | environment.json | 原实验的 Python、依赖、设备及数据统计 |
 | artifact_manifest.json | 本次同步的 73 个本地实验文件及 SHA-256 |
 | 迁移后验证.json | 从新位置加载模型、重新选择种子并执行1000次独立模拟的结果 |
+| paired_selection_ciao_wic_smoke_2026-10-11.json | Ciao 单 checkpoint、ASW/MD 各 1,000 次配对评估；仅为 smoke 结果 |
+| paired_selection_ciao_wic_train30_seed42_2026-10-11.json | Ciao 30-instance 训练、单训练种子 checkpoint 的独立 ASW/MD 评估 |
+| ciao_wic_three_training_seeds_2026-10-11.json | 三个 HIM 训练种子的 ASW/MD 配对评估汇总；另附逐种子完整结果 |
 
 上述已有结果、种子与审计文件保留原内容；目录整理没有重新生成训练结果。
 
@@ -40,6 +43,30 @@ Cora-ML，WIC + ASW，281 个种子，训练种子 42，独立评估种子 1042�
 第43轮最高验证值 38.15% 与第54轮种子集独立评估不是同一指标。当前证据支持这一单次训练的复现结果，不支持 HIM 已显著优于其他方法或已完成论文全部表格。
 
 原审计中的 checked_run、缓存清单中的 file 都相对于作者运行目录。artifact_manifest 的 path 则相对于团队根目录。
+
+## Ciao HIM smoke test（不可作为性能结论）
+
+HIM 的 Ciao adapter 成功读取 7,317 个用户、85,205 条无向信任边，并使用固定概率 ID `ciao_symmetric_weighted_cascade_v1_f2fc09305d5f`。Smoke training 只有 2 个传播实例、1 个 epoch、366 个种子；随后从保存的同一 checkpoint 分别用 ASW 和 MD 选点，在评估种子基数 1042、1,000 个 replicate 下进行配对模拟。
+
+| 选择器 | 平均激活用户 | 覆盖率 |
+|---|---:|---:|
+| ASW | 714.156 | 9.7602% |
+| MD | 713.378 | 9.7496% |
+
+配对差值为 +0.778 个激活用户，95% 配对 $t$ 区间为 $[-0.289, 1.845]$；ASW 较高 517 次、相同 17 次、MD 较高 466 次。区间跨过零，且 checkpoint 只训练了 1 个 epoch，因此这些数字只验证 checkpoint 加载、选点和独立评估链路；它们不能说明 HIM 或 ASW 在 Ciao 上更好，也不能代表真实信息传播。Ciao 的概率规则是静态图上的合成假设。完整逐轮结果、种子 ID 和输入哈希见 JSON artifact。
+
+正式 30-instance 训练前又发现并修复 HIM 训练缓存原本不区分实例数、随机种子和概率库的问题；新缓存键还纳入样本比例和图文件 SHA-256，并在读取时校验级联数量。历史两实例 smoke 文件仍保留在本机 ignored 目录，不会被新设置静默复用。为完成训练，本机 `methods/HIM/.venv` 已替换为按锁文件重建的 Python 3.12.14 环境（目录由 Git 忽略）。
+
+### 首批三个 30-instance runs
+
+在固定 Ciao WIC 设置下完成了训练种子 42、43、44，各使用 30 个传播实例，最多 200 epoch，每 epoch 100 轮在线验证，patience 10。Best checkpoint 分别为 epoch 28、19、26；早停分别在 epoch 39、30、37。ASW 和 MD 每次选出的 366 个种子集在独立评估随机流（基数 1042）上分别配对运行 1,000 次：
+
+| 选择器 | 三个训练种子平均激活用户 | 三个训练种子平均覆盖率 |
+|---|---:|---:|
+| ASW | 735.034 | 10.0456% |
+| MD | 734.662 | 10.0405% |
+
+跨三个训练种子的配对差（ASW--MD）均值为 +0.371 个激活用户，样本标准差 0.531，95% $t$ 区间为 $[-0.949,1.691]$（df=2），包含零。ASW 在两个训练种子的条件均值更高，在一个种子更低。各训练种子的 1,000 次重复给出 Monte Carlo 变化估计；只有三个独立训练种子时，训练间区间仍很不精确。这些结果不支持 ASW 优于 MD，也不构成跨算法排名。模拟基于固定的拓扑派生合成概率，不表示 Ciao 的真实传播。完整训练命令、checkpoint/cache 哈希、各方法种子集及 replicate 数据保存在三份逐 seed JSON 与聚合结果 JSON。
 
 ## 整理说明
 

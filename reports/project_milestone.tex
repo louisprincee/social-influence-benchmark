@@ -1,0 +1,120 @@
+\documentclass[10pt,twocolumn]{article}
+\usepackage[margin=0.72in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amssymb,booktabs,tabularx,array}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true,allcolors=black}
+\urlstyle{same}
+\setlength{\columnsep}{0.24in}
+\setlength{\parindent}{1em}
+\setlength{\parskip}{0.15em}
+\title{A Unified Study of Influence Maximization in Social Networks:\\
+HIM, DeepSN, and GBIM}
+\author{Course Project Milestone Report\\
+Team progress snapshot: 11 October 2026 (draft)}
+\date{}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+This milestone defines a unified course project on social-network information diffusion and influence maximization. Three team members are preparing complementary methods: HIM learns hyperbolic user representations from a graph and propagation histories; DeepSN uses a sheaf-neural framework for diffusion-aware seed selection; and GBIM applies Bayesian optimization to multiplex user--item influence. Only HIM currently has a verified team environment and end-to-end experiment. On Cora-ML, one fixed-seed WIC+ASW run produced 37.6195\% independently evaluated coverage at its saved final epoch. A paired, same-checkpoint ASW/MD comparison found a small conditional ASW advantage; neither result measures between-training-seed variation. We select the partially released Ciao review/trust network as the primary new-data target because it combines user trust relations with user--item interactions, connecting the user-level methods to GBIM's native multiplex setting. The project will use a shared user-level benchmark where assumptions can be aligned, then analyze GBIM's native user--item action space as a connected multiplex extension. Any direct three-way ranking will be reported only if the GBIM adaptation passes an explicit objective-equivalence check.
+\end{abstract}
+
+\section{Problem and Project Scope}
+We select the project theme of social-network transmission analysis, with influence maximization as the central task. Given a graph $G=(V,E)$, a diffusion process $\mathcal{M}$, and a budget $k$, the goal is to choose an initial seed set:
+\begin{equation}
+S^* \in \arg\max_{S\subseteq V,\ |S|\leq k}
+\sigma_{\mathcal{M}}(S), \qquad
+\sigma_{\mathcal{M}}(S)=\mathbb{E}\left[|A_{\mathcal{M}}(S)|\right],
+\end{equation}
+where $A_{\mathcal{M}}(S)$ is the set eventually activated from $S$. The practical difficulty is that the diffusion rules, edge probabilities, observed histories, and even the meaning of a ``seed'' differ across methods. Selecting high-degree users alone does not solve the set problem: two individually strong users may reach much of the same audience.
+
+Our overall question is: \emph{How do graph-based influence methods use structural, propagation, and user--item evidence to select effective interventions under a limited budget?} The primary dataset is the Ciao review/trust network. The methods are linked through one data pipeline and a staged experiment: first compare user-level seed selection under one fixed propagation evaluator; then test whether item-aware user--item actions improve reach on the same users and trust graph. This preserves a common question without pretending the original objectives are interchangeable. The intended contribution is a reproducible comparison pipeline, a careful explanation of information assumptions, and a small, interpretable empirical study rather than a claim of universal superiority.
+
+\section{Related Methods and Their Connection}
+Classical influence maximization maximizes expected spread under an explicit diffusion oracle. Under standard assumptions, the spread objective is monotone and submodular, allowing greedy selection to obtain a $1-1/e$ approximation with an exact marginal-gain oracle \cite{kempe}. The methods assigned in this project move beyond that single setting:
+\begin{itemize}[leftmargin=1.2em,itemsep=0.1em]
+  \item \textbf{HIM} learns one user embedding from social edges and observed propagation activations. Its Lorentzian distance to the origin estimates individual influence strength; its adaptive sliding window (ASW) adjusts scores of nearby candidate neighbors to reduce likely overlap \cite{him}.
+  \item \textbf{DeepSN} uses sheaf neural diffusion to represent heterogeneous influence patterns and a seed-set optimization procedure. Its focus is learned diffusion structure and set-level selection, rather than a single radial influence score \cite{deepsn}.
+  \item \textbf{GBIM} uses graph Bayesian optimization for multiplex influence maximization. Its native decision is over user--information pairs on user and item-related graphs, not simply a set of users \cite{gbim}.
+\end{itemize}
+DeepIM offers a related seed-set representation-learning approach, but is not one of the three assigned implementations in this project \cite{deepim}. The methods can be presented as complementary views of a single pipeline: observed graph and interaction data; representation or surrogate learning; seed/action selection; and independent cascade evaluation. HIM emphasizes geometric influence ranking plus overlap correction, DeepSN emphasizes a richer neural model of propagation, and GBIM emphasizes sample-efficient optimization in a multiplex action space. They should not be combined into an ensemble merely because they share the phrase ``influence maximization.''
+
+\begin{table*}[t]
+\centering\small
+\caption{Method roles, inputs, and comparison boundary.}
+\begin{tabularx}{\textwidth}{@{}p{0.12\textwidth}p{0.22\textwidth}p{0.25\textwidth}X@{}}
+\toprule
+Method & Native decision & Main evidence & Fair-comparison requirement \\
+\midrule
+HIM & $k$ user nodes & Social graph and propagation instances & Fix graph, cascade bank, budget, and independent evaluator; compare ASW with HIM-MD.\\
+DeepSN & $k$ user nodes / learned seed set & Graph and generated or observed diffusion examples & Verify its actual CLI, diffusion process, splits, and seed budget before transferring settings.\\
+GBIM & User--item seed pairs & Social and user--item/item relations & First reproduce its native multiplex objective; adapt to one shared user-only task only after validating the changed objective and code.\\
+\bottomrule
+\end{tabularx}
+\end{table*}
+
+\section{Data Collection and Initial Findings}
+\subsection{Existing evidence}
+The verified HIM reproduction uses the author-provided Cora-ML graph with 2,810 nodes and 7,981 undirected edges. Its WIC training cache contains 30 propagation instances. The saved run uses WIC, ASW, seed ratio 10\% ($k=281$), training seed 42, and stops at epoch 54. The saved final-epoch seed set was independently evaluated for 1,000 simulations with evaluation seed 1042: mean activated users $1,057.107$, standard deviation $32.1214$, and coverage $37.6195\%$. Reloading the model reproduced the exact seed set and evaluation summary. A distinct maximum validation coverage of 38.15\% occurred at epoch 43; it must not be reported as the independent score of the saved epoch-54 model.
+
+The reproduction must also name the actual simulator configuration. The paper specifies WIC probabilities in $[0,0.2]$, but the bundled Cora-ML probability file spans approximately $[0.1,0.2]$. The paper describes WLT parameters as fixed across propagation realizations, whereas the repository resamples node thresholds during each WLT simulation. We therefore treat the verified run as a reproduction of the recorded code/data setup, not as an exact match to every manuscript setting.
+
+An exploratory temporal Email-Eu-core Department 3 sample has also been downloaded from SNAP \cite{snapemail}. The recorded source is \url{https://snap.stanford.edu/data/email-Eu-core-temporal.html}. The current pilot covers 89 users and 3,514 events in a 180-day window; retaining directed edges observed at least twice gives 464 edges, 15 isolates, and 16 weakly connected components. This is a useful pipeline smoke test, but it is small and fragmented, has no message text or sentiment labels, and its email events are not validated diffusion cascades. It cannot by itself support claims about real opinion adoption.
+
+\subsection{Selected primary dataset and collection procedure}
+Ciao is selected as the primary new dataset because it provides a trust graph between users and user--item review/rating relations. We retrieved the baseline MAT archive from the dataset authors' page \cite{ciao}; the page says the collections were crawled in May 2011 and that the published release is only a partial version. The archive contains 284,086 ratings and 111,781 directed trust arcs. The trust graph covers 7,317 users; its undirected projection has 85,205 edges, seven connected components, and a largest component of 7,305 users. Rating records cover 7,375 users, of whom 58 have no trust-network membership; the shared graph-aligned rating table therefore retains 283,320 source rows. The Ciao page and accompanying README do not state an explicit data license or redistribution permission. We keep raw MAT files locally, do not commit or redistribute them, cite the source, and will confirm course-use expectations before any public release. Full provenance, hashes, schemas, and counts are recorded in \texttt{data/ciao\_source\_manifest.json}.
+
+The baseline MAT archive has no rating timestamps, and trust links do not have establishment dates. A separately packaged timestamped text release has 57,544 trust rows and 36,065 timestamped rating rows, substantially fewer than the baseline MAT archive. We have not established that it is a record-aligned timestamp extension, so it is excluded rather than merged. A shared preprocessing script now creates sorted contiguous user/item maps, preserves directed trust edges, exports a deduplicated undirected user graph, and retains original in-scope rating rows (including duplicate pairs and zero ratings). GBIM's existing adapter instead keeps the first rating per user--item pair, removes zero ratings, filters users outside the trust graph, and symmetrizes trust edges; that yields 281,865 ratings over 7,317 users and 104,957 items. Both views are documented so method-native behavior is not silently conflated with the shared data export.
+
+The trust graph gives HIM and DeepSN a common user-level network; the interaction layer gives GBIM the multiplex structure its native method expects. Ratings express product feedback, not evidence that one user caused another user's adoption. Since the dataset contains no observed diffusion cascades, user-level influence experiments will use a fixed, documented synthetic IC/WIC generator on this real topology, with training and evaluation cascade banks kept separate. HIM's first smoke test used the initial 5\% budget (366 users, nearest-integer rounding); it is a pipeline check only, not a cross-method result. Add 1\% and 10\% only after all method adapters pass the same input and output checks. GBIM's item-aware action remains a separate native-task extension unless it can be shown to share the user-only decision space and objective.
+
+\section{Mathematical Background and Algorithms}
+For independent-cascade (IC), each newly active node gets one attempt to activate each inactive neighbor, with edge probability $p_{uv}$. For linear-threshold (LT), node $v$ activates once the total incoming active-neighbor weight reaches its threshold $\theta_v$. These models permit controlled evaluation; they do not prove that real users follow either mechanism. Expected spread is expensive to compute exactly, which motivates simulation, approximations, or learned surrogates.
+
+HIM uses a Lorentz hyperbolic space, where negative curvature can represent hierarchical structure compactly, following a family of hyperbolic embedding methods \cite{poincare}. It learns user embeddings by fitting social edges and activation edges with relation-specific rotations and negative sampling. A proactive activation term moves users observed to activate others closer to the Lorentz origin. Its strength proxy is
+\begin{equation}
+\mathrm{LDO}_u=d_{\mathcal L}^{2}(\mathbf{x}_u,\mathbf{o}_{\mathcal L});
+\quad \text{smaller LDO implies higher estimated influence.}
+\end{equation}
+ASW begins with ascending LDO scores and a candidate window of size $w\approx\beta k$. After selecting seed $c$, it increases scores of candidate neighbors according to their hyperbolic proximity to $c$; larger updated scores make them less likely to be selected next. This is a local approximation to audience overlap, not exact marginal spread, so no greedy approximation guarantee follows automatically.
+
+The experimental design will separate \emph{training information} from \emph{evaluation information}. Classical Greedy/CELF can be included as known-parameter reference methods, but must be marked as receiving the true simulator parameters if the learned methods only see generated histories. Degree and random selection provide inexpensive controls. The primary metric is mean spread ratio $100\,\mathbb{E}[|A(S)|]/|V|$, with confidence intervals across independent training seeds; we will separately record data-preparation, training, seed-selection, and evaluation time. The number of propagation simulations, graph, seed budget, and evaluation random seeds will be fixed across methods.
+
+\section{Current Progress, Difficulties, and Work Plan}
+\begin{table}[t]
+\centering\footnotesize
+\caption{Team status at this milestone.}
+\begin{tabularx}{\columnwidth}{@{}p{0.18\columnwidth}X@{}}
+\toprule
+Workstream & Evidence and remaining work \\
+\midrule
+HIM & Cora-ML independent evaluation and same-checkpoint ASW/MD ablation verified; Ciao adapter, fixed synthetic WIC bank, and three 30-instance training seeds plus 1,000-round held-out ASW/MD evaluations complete. Across-seed paired interval includes zero and is imprecise; add degree/random controls before comparison.\\
+DeepSN & Author code and guide are present; environment and training are not yet verified. Confirm command-line behavior, input format, diffusion and evaluation protocol.\\
+GBIM & Author code and LastFM/Delicious data are present; environment and training are not yet verified. Reproduce native Multi-IC first; its user--item objective needs explicit treatment in any shared ranking.\\
+Team & Ciao files and schema are audited and the shared preprocessing entry point is in place; verify data-use expectations, validate all three adapters, then freeze the shared evaluator and cross-method protocol.\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+The main risks are: (i) the three methods do not optimize identical objects; (ii) reproducing results depends on diffusion parameters and whether histories are shared; (iii) data transformations can silently change graph direction, node identity, or the seed budget; (iv) training randomness and finite Monte Carlo evaluation add uncertainty; (v) public ratings/trust data may not encode actual information transmission; and (vi) the Ciao page does not state an explicit license. We will report these as design limitations instead of hiding them behind a single leaderboard.
+
+\textbf{Proposed milestones.} Confirm with the instructor that local educational use of the Ciao release is acceptable; preserve the existing shared export and validate row counts and mappings on each member's machine. HIM's Ciao adapter and three-seed synthetic WIC experiment are complete; next add Degree/Random controls. DeepSN should validate input and CLI behavior and complete its native smoke test; GBIM should reproduce its native Ciao objective. Test whether GBIM can be constrained to the same user-only action space without changing the task; if not, retain its native objective as the multiplex extension and report it separately. Then run the shared user-level benchmark with a common training bank where applicable and at least three independent training seeds; extend to five seeds and additional budgets after the pipeline is stable. By 9 November, the individual HIM review should meet its separate requirement of at least 1,000 English words, at least ten references, and at least five publications from 2024--2026, with teammate citation overlap checked. The exact final-project date remains to be confirmed with the instructor.
+
+\section{Conclusion}
+The project is feasible if it is framed around one selected Ciao data source and a staged comparison of complementary influence-maximization paradigms. HIM has a verified Cora-ML starting result and a small same-checkpoint selection ablation; on Ciao, three 30-instance HIM training runs and their independent paired evaluations are complete, but they do not establish a selector advantage or cross-method ranking. DeepSN and GBIM have not yet completed their Ciao checks. The existing 89-user Email-Eu-core pilot is better treated as a parser/smoke test. The next high-value actions are to confirm data-use expectations, add HIM degree/random controls, complete native DeepSN/GBIM checks, and freeze the common user-level evaluation contract. The GBIM multiplex result then extends the same study to item-aware interventions without obscuring objective differences.
+
+\begin{thebibliography}{99}
+\bibitem{kempe} D. Kempe, J. Kleinberg, and E. Tardos, ``Maximizing the spread of influence through a social network,'' in \emph{KDD}, 2003. \href{https://doi.org/10.1145/956755.956769}{doi:10.1145/956755.956769}.
+\bibitem{him} H. Qiao et al., ``Influence strength estimation in hyperbolic space for social influence maximization,'' \emph{IEEE Transactions on Knowledge and Data Engineering}, 2026. \href{https://doi.org/10.1109/TKDE.2026.3683562}{doi:10.1109/TKDE.2026.3683562}.
+\bibitem{deepsn} A. Hevapathige, Q. Wang, and A. N. Zehmakan, ``DeepSN: A sheaf neural framework for influence maximization,'' in \emph{AAAI}, 2025. \href{https://doi.org/10.1609/aaai.v39i16.33888}{doi:10.1609/aaai.v39i16.33888}.
+\bibitem{gbim} Z. Yuan, M. Shao, and Z. Chen, ``Graph Bayesian Optimization for Multiplex Influence Maximization,'' in \emph{AAAI}, 2024. \href{https://arxiv.org/abs/2403.18866}{arXiv:2403.18866}.
+\bibitem{gbimdata} GBIM authors, ``GBIM source repository and dataset instructions,'' 2024. \href{https://github.com/zirui-yuan/GBIM}{GitHub repository}.
+\bibitem{ciao} J. Tang, H. Gao, H. Liu, and A. Das Sarma, ``eTrust: Understanding trust evolution in an online world,'' in \emph{KDD}, pp. 253--261, 2012; dataset source page, \href{https://www.cse.msu.edu/~tangjili/datasetcode/truststudy.htm}{Ciao and Epinions data}.
+\bibitem{snapemail} J. Leskovec, K. J. Lang, A. Dasgupta, and M. W. Mahoney, ``Community structure in large networks: Natural cluster sizes and the absence of large well-defined clusters,'' Internet Mathematics, 2009; SNAP, ``Email-Eu-core temporal network,'' \href{https://snap.stanford.edu/data/email-Eu-core-temporal.html}{dataset page}.
+\bibitem{deepim} C. Ling et al., ``Deep graph representation learning and optimization for influence maximization,'' in \emph{ICML}, 2023. \href{https://proceedings.mlr.press/v202/ling23b.html}{PMLR paper}.
+\bibitem{poincare} M. Nickel and D. Kiela, ``Poincar\'e embeddings for learning hierarchical representations,'' in \emph{NeurIPS}, 2017. \href{https://proceedings.neurips.cc/paper/2017/hash/59dfa2df42d9e3d41f5b02bfc32229dd-Abstract.html}{Publisher paper}.
+\end{thebibliography}
+\end{document}

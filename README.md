@@ -13,22 +13,22 @@ cd social-influence-benchmark
 
 | 成员 | 方法与运行入口 | 中文操作指南 | 已完成状态 |
 |---|---|---|---|
-| 刘同学 | [methods/HIM/run.py](methods/HIM/run.py) | [HIM 复现指南](methods/HIM/复现指南.md) | Mac CPU 环境、训练、保存模型及独立评估已验证 |
+| 刘同学 | [methods/HIM/run.py](methods/HIM/run.py) | [HIM 环境与实验说明](methods/HIM/README.md) | Mac CPU 环境、训练、保存模型及独立评估已验证 |
 | 李同学 | [methods/DeepSN/model.py](methods/DeepSN/model.py) | [DeepSN 复现指南](methods/DeepSN/复现指南.md) | 源码已准备；团队环境与训练待验证 |
-| 姜来同学 | [methods/GBIM/main.py](methods/GBIM/main.py) | [GBIM 复现指南](methods/GBIM/复现指南.md) | 源码已准备；团队环境与训练待验证 |
+| 姜同学 | [methods/GBIM/main.py](methods/GBIM/main.py) | [GBIM 复现指南](methods/GBIM/复现指南.md) | 源码已准备；团队环境与训练待验证 |
 
 ## 文件放在哪里
 
 ```text
 social-influence-benchmark/
 ├── README.md                  # 团队入口、分工与协作约定
-├── UPSTREAM.md                # 作者来源、原始版本与本地修改
 ├── methods/
-│   ├── HIM/                   # 源码、中文指南、Mac 依赖文件
+│   ├── HIM/                   # 源码、运行/复现说明、已验证依赖
 │   ├── DeepSN/                # 源码、中文指南
 │   └── GBIM/                  # 源码、中文指南；main.py 直接在这里
 ├── data/                      # 共享数据说明与已有邮件网络统计
 ├── results/HIM/               # 已有结果 JSON、种子集与检查记录
+├── reports/project_milestone.tex # 团队 project milestone 初稿
 └── reports/HIM/               # 英文个人综述及参考文献
 ```
 
@@ -38,10 +38,11 @@ GitHub 包含源码、指南、小型结果和报告。数据包、模型、缓�
 
 ## 刘同学已有成果
 
-HIM 的原数据、配置、缓存、日志、模型和检查文件继续保存在 `methods/HIM`；73 个文件有 [SHA-256 清单](results/HIM/artifact_manifest.json)。原独立 HIM 目录仍保留备份。
+HIM 的原数据、配置、缓存、日志、模型和检查文件已同步到 `methods/HIM`；73 个文件有 [SHA-256 清单](results/HIM/artifact_manifest.json)。
 
 - 最后轮次模型：`methods/HIM/save/cora_ml/1009_150839_HIM_WIC_10.0/model_last_epoch.pt`（本机保存，需要时单独共享）。
 - [已验证结果与解释](results/HIM/README.md)：Cora-ML、WIC + ASW、281 个种子，1000 次独立模拟覆盖率 **37.619466%**。
+- Ciao 已完成 HIM 的 3 个独立训练种子（每次 30 个级联实例）和每个 checkpoint 独立 1000 轮 ASW/MD 配对评估；跨训练种子的差异区间包含零，不能得出优越性结论。详见 [三种子汇总](results/HIM/ciao_wic_three_training_seeds_2026-10-11.json)。
 - [英文个人综述](reports/HIM/03_individual_review.tex)。
 
 刘同学在当前电脑继续运行，从团队根目录执行：
@@ -51,7 +52,7 @@ source methods/HIM/.venv/bin/activate
 cd methods/HIM
 ```
 
-本机环境是指向原独立 HIM 环境的软链接；保留原环境目录即可继续使用。源码中的两项复现修正已直接保存，组员无需另行应用补丁。
+本机 `methods/HIM/.venv` 是按 [HIM requirements.txt](methods/HIM/requirements.txt) 重建的 Python 3.12.14 环境。不要把环境目录提交到 Git；组员应按依赖文件在自己的机器安装。源码中的复现修正已直接保存，组员无需另行应用补丁。
 
 ## 三人如何协作
 
@@ -84,4 +85,16 @@ git push -u origin li-deepsn
 
 DeepSN 默认使用 SIS，且入口忽略命令行参数。GBIM 优化的是用户—信息种子对，目标与 HIM 的普通用户覆盖率不同；完成任务适配并验证后才可横向排名。详见各自指南。
 
-老师要求至少三种算法在新的有趣数据集上比较，目前尚未完成这一部分；[邮件网络数据说明](data/README.md)是已有候选。Milestone 为 3–5 页；个人英文综述至少 1000 词、至少 10 篇文献，其中近三年至少 5 篇，与任一其他组员重复文献不超过 3 篇。报告只写实际完成的实验，LaTeX 使用双栏。
+老师要求至少三种算法在新的有趣数据集上比较；Ciao 已确定为共享新数据集，HIM 还需 degree/random 基线，DeepSN/GBIM 适配和统一对比仍未完成。Milestone 为 3–5 页；个人英文综述至少 1000 词、至少 10 篇文献，其中近三年至少 5 篇，与任一其他组员重复文献不超过 3 篇。报告只写实际完成的实验，LaTeX 使用双栏。
+
+## 作者代码来源与本地修改
+
+各方法代码基于以下作者仓库版本整理。公开仓库没有为作者代码另行添加许可证；使用与再分发应遵从各作者仓库的许可及要求。
+
+| 方法 | 作者仓库 | 基准提交 |
+|---|---|---|
+| HIM | [PlaymakerQ/HIM](https://github.com/PlaymakerQ/HIM) | `24e97779f8882666ab70fd0cf19f72440122db9d` |
+| DeepSN | [Aselahp/DeepSN](https://github.com/Aselahp/DeepSN) | `bbc7780e448baf2b7f5bdc08668748c10f286ca1` |
+| GBIM | [zirui-yuan/GBIM](https://github.com/zirui-yuan/GBIM) | `d5bd89880dfd6d56275be7b485a19b50f461bba3` |
+
+本地适配摘要：HIM 增加可配置数据集、精确种子数和随机种子入口，保存最佳 checkpoint/种子集，并隔离训练缓存；其扩散代码避免未指定种子时重置 NumPy RNG。DeepSN 作者源码未修改；GBIM 展平作者目录以便直接从 `methods/GBIM` 运行。各方法的详细变更与复现说明保留在其目录中。作者附带的 `.DS_Store`、Python 编译缓存及不需要的 HIM ZIP 已清理；作者的 `resultslog.txt` 仍留在 GBIM 目录中，不作为团队实验结果。

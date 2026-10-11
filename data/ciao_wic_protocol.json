@@ -1,0 +1,63 @@
+{
+  "name": "Ciao synthetic WIC user-level pilot",
+  "status": "Initial three-seed HIM run completed; freeze jointly before cross-method results",
+  "graph": {
+    "source": "data/processed/ciao/trust_edges_undirected.csv",
+    "nodes": 7317,
+    "undirected_edges": 85205,
+    "user_map_sha256": "5111b6dcfc483f29d795bc4f1b8610b9741a68dc1078d7fee6fde796eba958b3",
+    "undirected_edge_csv_sha256": "e3392f93732a91b7bacb5e041e9f80324837ce7652b3a117edc10a630797ae18"
+  },
+  "diffusion": {
+    "model": "WIC",
+    "probability_bank": "symmetric weighted-cascade adaptation",
+    "edge_probability": "For each undirected edge {u,v}, use p(u,v)=p(v,u)=1/max(degree(u),degree(v)).",
+    "rationale": "A topology-derived fixed probability bank avoids selecting a uniform probability range without evidence on this denser graph; the symmetric rule makes the sum of incident edge probabilities at each node no greater than one.",
+    "interpretation": "Synthetic diffusion on the Ciao trust topology; not measured real-world information adoption or a claim about Ciao's true transmission probabilities.",
+    "probability_id": "ciao_symmetric_weighted_cascade_v1_f2fc09305d5f",
+    "probability_file": "methods/HIM/configs/diffusion/ciao_WIC_random_probs.pkl",
+    "probability_file_sha256": "60335ded6739e26ee339a44d479aef16aec3f03193105b05cb57f883857fc605"
+  },
+  "him": {
+    "training_seed": 42,
+    "seed_budget": 366,
+    "seed_budget_rule": "nearest integer to 5% of 7317 users",
+    "training_seed_sampling": "HIM degree mode samples the training seed set from the top 20% of users by degree.",
+    "smoke_training_instances": 2,
+    "epochs_for_smoke_test": 1,
+    "within_training_loop_evaluation_rounds_for_smoke_test": 2,
+    "within_training_loop_evaluation": "Pipeline validation only; do not report it as an independent result.",
+    "initial_run": {
+      "training_seed": 42,
+      "training_instances": 30,
+      "maximum_epochs": 200,
+      "validation_rounds_per_epoch": 100,
+      "early_stopping_patience": 10,
+      "stopped_after_epoch": 39,
+      "selected_checkpoint_epoch": 28,
+      "selection_method": "ASW",
+      "training_sample_ratio": 0.2,
+      "training_cache": "methods/HIM/data/diffusion/ciao_WIC_k5_b366_n30_s42_sr0.2_ciao_symmetric_weighted_cascade_v1_f2fc09305d5f_907a0bde0a2e.pkl",
+      "training_cache_sha256": "82c6a4b78c3e09a25feea8711ca2aa0cf5fb25e05069dea73159d0edbe3c2ca1",
+      "checkpoint": "methods/HIM/save/ciao/1011_162355_HIM_WIC_5.0/model_best_epoch.pt",
+      "result": "results/HIM/paired_selection_ciao_wic_train30_seed42_2026-10-11.json",
+      "interpretation": "One training seed and a checkpoint selected using within-training simulator evaluations; not a cross-method or multi-seed conclusion."
+    }
+  },
+  "independent_evaluation": {
+    "evaluation_seed_base": 1042,
+    "rounds_per_seed_set": 1000,
+    "rule": "After training and checkpoint selection, reset Python random and NumPy RNG to the replicate-specific seed before evaluating each seed set. Use the same replicate-specific seed for each method; keep the edge-probability bank fixed and separate training and evaluation random streams.",
+    "result": "results/HIM/paired_selection_ciao_wic_train30_seed42_2026-10-11.json"
+  },
+  "initial_three_seed_summary": {
+    "training_seeds": [42, 43, 44],
+    "result": "results/HIM/ciao_wic_three_training_seeds_2026-10-11.json",
+    "paired_ASW_minus_MD_mean_activated": 0.3713333333333333,
+    "paired_ASW_minus_MD_ci95_t_df2_activated": [
+      -0.9487359819955747,
+      1.6914026486622413
+    ],
+    "interpretation": "Exploratory three-seed estimate; the interval includes zero and has only 2 degrees of freedom. It is not evidence of selector superiority or cross-method performance."
+  }
+}
