@@ -26,7 +26,12 @@ class SheafDiffusion(nn.Module):
 
         self.hidden_dim = args.hidden_channels * self.final_d
         #self.device = args.device
-        self.graph_size =  198 #args.graph_size
+        if getattr(args, "graph_size", None):
+            self.graph_size = int(args.graph_size)
+        elif edge_index is not None and getattr(edge_index, "numel", lambda: 0)():
+            self.graph_size = int(edge_index.max().item()) + 1
+        else:
+            self.graph_size = 198
         self.layers = args.layers
         self.normalised = args.normalised
         self.deg_normalised = args.deg_normalised

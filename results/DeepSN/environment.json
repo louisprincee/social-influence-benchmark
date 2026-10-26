@@ -1,0 +1,8 @@
+{
+  "python": "3.11.17",
+  "platform": "macOS-15.7.3-arm64-arm-64bit",
+  "torch": "2.5.1",
+  "device": "cpu",
+  "venv": "methods/DeepSN/.venv",
+  "pyg_wheels": "https://data.pyg.org/whl/torch-2.5.0+cpu.html"
+}

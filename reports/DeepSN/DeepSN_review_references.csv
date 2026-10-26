@@ -1,0 +1,15 @@
+key,year,title,recent_2024_2026,overlap_with_liu
+kempe,2003,Maximizing the spread of influence through a social network,False,yes
+pastor,2001,Epidemic spreading in scale-free networks,False,no
+chen2010,2010,Scalable influence maximization for prevalent viral marketing in large-scale social networks,False,no
+borgs,2014,Maximizing social influence in nearly optimal time,False,no
+etrust,2012,eTrust: Understanding trust evolution in an online world,False,no
+kipf,2017,Semi-supervised classification with graph convolutional networks,False,no
+deepinf,2018,DeepInf: Social influence prediction with deep learning,False,no
+hansen,2019,Toward a spectral theory of cellular sheaves,False,no
+bodnar,2022,Neural sheaf diffusion: A topological perspective on heterophily and oversmoothing,False,no
+battiloro,2024,Generalized simplicial attention neural networks,True,no
+topobench,2024,TopoBenchmarkX: A framework for benchmarking topological deep learning,True,no
+maggs,2024,Simplicial representation learning with neural k-forms,True,no
+deepsn,2025,DeepSN: A sheaf neural framework for influence maximization,True,yes
+him,2026,Influence strength estimation in hyperbolic space for social influence maximization,True,yes

@@ -10,7 +10,8 @@ import torch.sparse as sparse
 
 
 parser = get_parser()
-args = parser.parse_args()
+# Do not parse sys.argv here: this module's -d is sheaf stalk dimension, not dataset.
+args = parser.parse_args([])
 
 class LearnableSparseCOO(nn.Module):
     def __init__(self, indices, size, init_value=0.0):
@@ -57,7 +58,14 @@ class DeepSN(nn.Module):
         super(DeepSN, self).__init__()
         self.dropout = dropout
 
-        self.sheaf = SheafGraphLayer(nfeat, nclass, dropout=dropout, edge_index = edge_index.coalesce().indices(), concat=False)
+        self.sheaf = SheafGraphLayer(
+            nfeat,
+            nclass,
+            dropout=dropout,
+            edge_index=edge_index.coalesce().indices(),
+            concat=False,
+            graph_size=edge_index.shape[0],
+        )
         
        
         
@@ -134,11 +142,14 @@ class SpecialSpmm(nn.Module):
 class SheafGraphLayer(nn.Module):
 
 
-    def __init__(self, in_features, out_features, dropout, edge_index, concat=True):
+    def __init__(self, in_features, out_features, dropout, edge_index, concat=True, graph_size=None):
         super(SheafGraphLayer, self).__init__()
         self.in_features = in_features
         self.out_features = out_features
         self.concat = concat
+        if graph_size is None:
+            graph_size = int(edge_index.max().item()) + 1 if edge_index.numel() else 0
+        args.graph_size = int(graph_size)
         self.sheaf = GeneralSheafDiffusion(edge_index, args)
         #self.sheaf = GraphLaplacianDiffusion(edge_index, args)
         self.W = nn.Parameter(torch.zeros(size=(in_features, out_features)))

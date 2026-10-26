@@ -1,0 +1,86 @@
+{
+  "method": "DeepSN",
+  "dataset": "ciao",
+  "diffusion_model": "WIC",
+  "probability_id": "ciao_symmetric_weighted_cascade_v1_f2fc09305d5f",
+  "nodes": 7317,
+  "undirected_edges": 85205,
+  "training_instances_per_run": 30,
+  "seed_budget": 366,
+  "estimation_epochs": 50,
+  "score_epochs": 200,
+  "evaluation_seed_base": 1042,
+  "evaluation_rounds_per_training_seed": 1000,
+  "training_seeds": [
+    42,
+    43,
+    44
+  ],
+  "runs": [
+    {
+      "training_seed": 42,
+      "training_pairs": 30,
+      "estimation_epochs": 50,
+      "score_epochs": 200,
+      "training_runtime_seconds": 188.57586884498596,
+      "training_cache": "methods/DeepSN/data/ciao_n30_s42/ciao_mean_IC50.SG",
+      "training_cache_sha256": "a0156c8b520d862878427e4097c21368e157e56277b498db93a5adca4d5d9152",
+      "seed_count": 366,
+      "mean_activated": 606.469,
+      "stdev_activated": 29.06767911218522,
+      "mean_coverage_percent": 8.288492551592183,
+      "evaluation_artifact": "ciao_wic_independent_n30_s42.json",
+      "training_artifact": "ciao_IC_k5_n30_s42.json"
+    },
+    {
+      "training_seed": 43,
+      "training_pairs": 30,
+      "estimation_epochs": 50,
+      "score_epochs": 200,
+      "training_runtime_seconds": 196.4685242176056,
+      "training_cache": "methods/DeepSN/data/ciao_n30_s43/ciao_mean_IC50.SG",
+      "training_cache_sha256": "394d54b31dcee8bef1b792d773311c7601db1aab06331e00cb74b5e28a819127",
+      "seed_count": 366,
+      "mean_activated": 607.064,
+      "stdev_activated": 30.033813176716905,
+      "mean_coverage_percent": 8.296624299576328,
+      "evaluation_artifact": "ciao_wic_independent_n30_s43.json",
+      "training_artifact": "ciao_IC_k5_n30_s43.json"
+    },
+    {
+      "training_seed": 44,
+      "training_pairs": 30,
+      "estimation_epochs": 50,
+      "score_epochs": 200,
+      "training_runtime_seconds": 204.26564383506775,
+      "training_cache": "methods/DeepSN/data/ciao_n30_s44/ciao_mean_IC50.SG",
+      "training_cache_sha256": "592e18ef5fcf846044bf7ebb693daac392601d63fb69d82b87c1e0c7d8772432",
+      "seed_count": 366,
+      "mean_activated": 571.615,
+      "stdev_activated": 27.46045978952013,
+      "mean_coverage_percent": 7.8121497881645485,
+      "evaluation_artifact": "ciao_wic_independent_n30_s44.json",
+      "training_artifact": "ciao_IC_k5_n30_s44.json"
+    }
+  ],
+  "summary_across_training_seeds": {
+    "mean_activated": {
+      "mean": 595.0493333333333,
+      "sample_standard_deviation": 20.296908393480354,
+      "ci95_t_df2": [
+        544.6290177611469,
+        645.4696489055196
+      ]
+    },
+    "mean_coverage_percent": {
+      "mean": 8.13242221311102,
+      "sample_standard_deviation": 0.27739385531611765,
+      "ci95_t_df2": [
+        7.443337676112438,
+        8.821506750109602
+      ]
+    }
+  },
+  "him_reference_asw_three_seed_mean_activated": 735.0336666666667,
+  "interpretation": "Matched HIM Ciao protocol on graph, WIC probabilities, k=366, three independent training seeds, 30 synthetic training cascades per seed, and 1,000-round independent evaluation with seed base 1042. DeepSN still uses its own training procedure (50 estimation + 200 scoring epochs) rather than HIM's 200-epoch hyperbolic trainer. The across-seed t interval has only 2 degrees of freedom. This is not a claim that DeepSN is worse than HIM, and not a real-world adoption result."
+}

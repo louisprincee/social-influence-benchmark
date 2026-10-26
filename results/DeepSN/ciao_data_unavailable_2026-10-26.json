@@ -1,0 +1,19 @@
+{
+  "status": "blocked_before_training",
+  "dataset": "ciao",
+  "machine": "Mac Air Apple Silicon",
+  "attempted_url": "https://www.cse.msu.edu/~tangjili/datasetcode/ciao.zip",
+  "expected_zip_sha256": "dee78c18b4a0843791e82b522f632a1166296e6048537b13b18c281a12e8f741",
+  "local_raw_present": false,
+  "local_processed_present": false,
+  "error": "HTTPS connect to www.cse.msu.edu:443 timed out from this machine (curl 28 / WebFetch 504). No local rating.mat or trustnetwork.mat was found.",
+  "what_is_ready": [
+    "methods/DeepSN/fetch_ciao.py verifies the official zip against the team manifest hashes",
+    "python data/process_ciao.py writes the shared CSVs",
+    "methods/DeepSN/prepare_ciao_sg.py writes ciao_mean_IC50.SG with 16 WIC training pairs at 5% budget",
+    "python model.py -d ciao -dm IC -sp 5 --estimation_epochs 5 --score_epochs 20 --eval_rounds 20 --tag ciao-lite",
+    "methods/DeepSN/evaluate_ciao_seeds.py runs independent WIC Monte Carlo with evaluation seed 1042"
+  ],
+  "not_done": "No Ciao DeepSN training or independent WIC score was produced, because the shared graph files are not on this Mac and the official host was unreachable.",
+  "interpretation": "Do not invent a substitute Ciao graph. When the official archive is available, run the commands above; do not rank against HIM until that graph hash matches data/ciao_wic_protocol.json."
+}

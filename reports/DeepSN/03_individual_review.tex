@@ -1,0 +1,114 @@
+% 李子曦：DeepSN 相关工作中文综述
+% 与刘同学重复文献至多 3 篇：kempe, deepsn, him
+\documentclass[a4paper,11pt,twocolumn]{ctexart}
+\usepackage{amsmath,amssymb,booktabs}
+\usepackage{geometry}
+\usepackage{hyperref}
+\geometry{margin=0.75in}
+\hypersetup{colorlinks=true,allcolors=black}
+\urlstyle{same}
+\setlength{\columnsep}{0.28in}
+\setlength{\parindent}{2em}
+\pagestyle{plain}
+
+\begin{document}
+\title{层丛神经网络视角下的影响力最大化：DeepSN 及相关工作综述}
+\author{李子曦\\社交网络与舆情分析课程项目个人综述\\2026年10月}
+\date{}
+\maketitle
+
+\begin{abstract}
+影响力最大化要求在有限预算下选择种子用户，使期望传播范围尽可能大。本综述围绕课程中由本人负责的 DeepSN 展开：先说明独立级联、线性阈值与 SIS 等传播模型如何改变“影响”的含义，再回顾可扩展选择与图神经网络估计，重点讨论层丛（sheaf）神经网络为何被用于刻画异质邻域影响，最后把 DeepSN 的两阶段流程放到与 HIM 对齐的 Ciao 合成加权级联实验中理解。综述的立场是：DeepSN 的贡献在于用层丛扩散近似局部传播结构，而不是提供可直接跨论文比较的覆盖率数字；本课程在 Jazz 上完成作者 SIS 协议复现，在 Ciao 上完成与组内协议对齐的独立评估，后者不能解释为真实舆情采纳。
+\end{abstract}
+
+\section{综述范围与问题}
+
+给定社交图 $G=(V,E)$、预算 $k$ 与传播机制 $\mathcal{M}$，影响力最大化寻找种子集
+\begin{equation}
+S^*\in\arg\max_{S\subseteq V,\,|S|\le k}\sigma_{\mathcal{M}}(S),\quad
+\sigma_{\mathcal{M}}(S)=\mathbb{E}\bigl[|A_{\mathcal{M}}(S)|\bigr],
+\end{equation}
+其中 $A_{\mathcal{M}}(S)$ 为最终激活集合。该目标看起来只是组合优化，真正困难在于 $\sigma_{\mathcal{M}}$ 几乎无法精确计算，且 $\mathcal{M}$ 本身往往未知。课程项目把三种方法放到同一问题上：HIM 用双曲几何估计个体强度，DeepSN 用层丛神经网络拟合传播再优化种子集，GBIM 在用户--信息多重图上做贝叶斯优化。本人负责 DeepSN 的复现与适配，因此本文的 related work 不以双曲嵌入或多重图行动空间为主线，而以“如何用可学习的扩散结构代替反复模拟”为主线。
+
+需要预先澄清三点。第一，经典近似比依赖单调性与子模性，这些性质对独立级联（IC）和线性阈值（LT）在标准假设下成立，对作者实现中的 SIS 并不自动给出同样保证。第二，神经网络一旦用模拟器生成的级联来训练，学到的是该模拟器的统计规律，不是用户真实态度转移。第三，论文表格中的覆盖率只有在图构造、边概率、预算和评估随机流一致时才可对照。本课程后续把 Ciao 信任图上的合成加权级联（WIC）冻结为组内评估器，正是为了避免把 Jazz 上的 SIS 数字拿去和 Cora-ML 上的 WIC 数字比较。
+
+\section{传播模型：独立尝试、阈值与反复感染}
+
+Kempe、Kleinberg 与 Tardos 把影响力最大化表述为 IC 与 LT 下的离散优化，并证明在标准假设下期望传播范围单调且子模，从而贪心选择在精确边际收益下具有 $1-1/e$ 近似比\cite{kempe}。IC 中每个新激活节点对每条未激活邻边只有一次尝试；LT 中节点在入边权重之和超过自身阈值时被激活。二者都把一次传播写成有限步的吸收过程：节点被激活后不再回到易感态，因此“覆盖率”有清晰的集合含义。
+
+DeepSN 作者代码的默认传播却是 SIS。Pastor-Satorras 与 Vespignani 表明，无标度网络上的接触过程可以在任意小的感染率下维持地方性流行，因为高度数节点不断提供再感染机会\cite{pastor}。SIS 允许节点从感染态恢复为易感态，再被邻居感染，稳定态是一种动态平衡，而不是 IC 意义上的最终激活集合。于是同一组种子在 SIS 下可以报告很高的“感染份额”，在 IC/WIC 下却只覆盖较小的可达集合。这不是实现错误，而是目标函数变了。本课程在 Jazz 上按作者默认完成 SIS 复现，平均覆盖率约 86.45\%；该数字只说明默认模拟器在小而密的合作网络上容易维持感染，不能外推到 Ciao 的 WIC。
+
+边概率的指定同样改变问题。Chen、Wang 与 Wang 针对大规模病毒式营销给出可扩展的 IC 近似，其消息传递依赖对传播概率的显式假设\cite{chen2010}。组内 Ciao 协议不采用均匀随机概率，而采用 $p(u,v)=1/\max(\deg u,\deg v)$ 的对称加权级联，使每个节点入射概率之和不超过一，并避免在更密的信任图上任意指定区间。该规则来自拓扑，不是从 Ciao 评分中估计出的真实转发率。Tang、Gao 与 Liu 发布的 Ciao 数据描述的是信任关系与商品评分，抓取于 2011 年，官方说明为部分发布版本\cite{etrust}。信任边没有建立时间，基线 MAT 评分也没有时间戳，因此不存在可验证的信息级联。任何在该图上报告的 spread，包括本文实验，都必须标明为静态拓扑上的合成扩散。
+
+\section{从反复模拟到反向可达}
+
+即使 $\mathcal{M}$ 已知，$\sigma_{\mathcal{M}}(S)$ 仍通常靠蒙特卡洛估计。贪心每一轮要对大量候选重算边际收益，直接模拟的代价随图规模和模拟次数上升。Borgs 等人把估计改写为反向可达（reverse reachable）抽样：在随机活边图上从随机目标回溯，能到达该目标的节点组成 RR 集；覆盖许多 RR 集的种子近似于高影响节点\cite{borgs}。这把传播估计变成集合覆盖，并为后续 IMM、TIM 一类方法提供概率保证的来源。需要强调：RR 方法仍然假设活边过程由已知的 IC 类规则生成。它提高的是\emph{已知模型}下的计算效率，并不学习未知的异质影响方向。
+
+DeepSN 选择了另一条路。它不在选点过程中反复调用精确或近似的边际收益神谕，而是先用神经网络拟合“种子指示向量 $\to$ 激活模式”的映射，再在拟合出的代理上对种子赋值做梯度式最大化。其计算负担从评估阶段前移到训练阶段。若训练级联很少，或级联来自与评估器不同的过程，代理可以在训练损失上下降，却在独立评估器上表现平庸。这正是本课程必须把训练随机流和评估随机流分开的原因。
+
+\section{图神经网络作为影响估计器}
+
+把节点特征与邻域聚合起来预测激活，是图神经网络进入该领域的直接动机。Kipf 与 Welling 的图卷积网络用对称归一化邻接做层间传播，本质是一种各向同性的低通滤波\cite{kipf}。若影响沿边的“限制映射”对所有邻居相同，GCN 式聚合是合理的；若同一节点对上级、同级与下级邻居使用完全不同的影响规则，共享一个标量权重就会抹平差异。Qiu 等人的 DeepInf 用图注意力从局部网络预测社会影响，任务是预测而非选种，但它已经表明：观测到的激活依赖于局部结构，且该依赖不必是度的单调函数\cite{deepinf}。
+
+影响最大化还要求集合层面的非加性。两个高度数用户可能争夺同一批邻居，边际收益随已选种子下降。只对节点打分再取 Top-$k$，等于假设分数在集合中可加。DeepSN 用可学习的注意力加权邻接，并在社区划分后按簇分配预算，试图把重叠部分地写进选择规则。这与“先学个体强度、再另做重叠修正”的两段式设计不同，也与把整个种子集送入自编码器的潜空间搜索不同。后一类方法在组内由其他同学的综述覆盖，本文不展开其训练技巧，以免把文献集合与刘同学的综述重叠扩大。
+
+\section{层丛神经网络：DeepSN 的表示来源}
+
+层丛把每个节点配一个向量空间（茎），每条有向边配一个线性限制映射，从而允许邻域之间的信息在传输前先被“翻译”。Hansen 与 Ghrist 给出细胞层丛拉普拉斯的谱理论，说明离散 Hodge 理论可以建立在茎与限制映射之上，而不只是建立在标量图拉普拉斯之上\cite{hansen}。Bodnar 等人把这一结构写成可学习的 Neural Sheaf Diffusion：限制映射由节点特征预测，前向过程是层丛拉普拉斯上的扩散（可用常微分方程积分），用以缓解异配图上的过平滑，并表达邻居之间不可交换的关系\cite{bodnar}。DeepSN 公开实现正是把该类连续层丛扩散插进影响估计网络，而不是从零推导一套新的拓扑层。
+
+后续工作从两个方向加厚了这一工具箱。Battiloro 等人把注意力机制写到单纯复形上，使消息传递可以发生在边、三角形等更高阶胞腔之间，而不仅是节点邻域\cite{battiloro}。Maggs、Hacker 与 Rieck 用神经 $k$-形式在单纯复形上学表示，强调几何与拓扑对象本身可以作为网络的输入，而不必先把数据压成普通图\cite{maggs}。Telyatnikov 等人发布 TopoBenchmarkX，把图、单纯复形与胞腔复形上的任务放到同一评测框架，提醒读者：层丛或高阶网络的收益必须相对明确的基线与数据划分来谈，否则容易把实现差异写成理论胜利\cite{topobench}。这些工作都不直接做种子选择，但它们共同支持一个判断：若我们相信社会影响是\emph{有方向、有角色}的，而不是对称的标量权重，那么在 GCN 之上增加茎与限制映射是有动机的。
+
+该动机也有代价。茎维数、正交参数化、扩散积分步数都会放大内存与时间；DeepSN 依赖的 \texttt{torch-sparse} 还对 PyTorch 版本敏感。本课程在 Apple Silicon 上必须把 Torch 钉在 2.5.1，2.14 的扩展会在导入时崩溃。这不是算法论文关心的细节，却是把层丛模型当作业实现时不可回避的约束。此外，作者代码曾把 \texttt{graph\_size} 写死为 Jazz 的 198，说明原生实验的隐含对象是小图；把它迁移到 Ciao 的 7317 个用户，首先是工程正确性，其次才是精度。
+
+\section{DeepSN 的两阶段流程}
+
+Hevapathige、Wang 与 Zehmakan 提出 DeepSN，用层丛神经网络框架做影响力最大化\cite{deepsn}。结合作者仓库与本课程实现，其流程可以概括为两段，而不必把论文中的全部消融复述一遍。
+
+第一段是传播估计。输入是图的稀疏邻接以及若干“种子指示--激活结果”对。节点特征由二跳范围内的度一类结构量做成独热，再经线性层映到固定宽度。层丛扩散模块在加权邻接上迭代，输出每个节点被激活的代理值；损失是该代理与训练激活之间的误差。邻接上另有一组可学习的边权（经 sigmoid 压到 $(0,1)$），使模型可以减弱或加强某些结构边在扩散中的作用。训练不调用评估阶段的随机数，这与组内“训练流和评估流分离”的约定一致。
+
+第二段是种子赋值。估计网络固定后，用学习到的边权构图并做 Louvain 划分，得到社区标签。一个浅层评分网络输出节点分数，再按社区大小比例分配预算，不足的名额补给全局高分节点。最大化损失推动代理激活之和上升。选择是硬的 0-1 指示，因此这一段的梯度信号弱，更多依赖评分网络把分数排到可被比例选择命中的位置。最终种子集交给传播模拟器做蒙特卡洛。作者默认在 Jazz 上使用 SIS 与 20\% 预算；入口一旦忽略命令行，所有自称“IC、5\%”的运行实际上仍在跑默认 SIS。本课程把命令行改为真实读取，并让层丛模块的图规模随当前 $|V|$ 变化，否则 Ciao 适配在数学上是错的。
+
+对 DeepSN 的合理期望因此是：它提供一个可训练的、带异质限制映射的扩散代理，以及一个把社区结构写进预算分配的启发式。它不提供 IC 下的 $1-1/e$ 证明，也不自动校准到另一种传播模型。若评估器从 SIS 换成 WIC，同一套权重没有义务保持排序。
+
+\section{与 HIM 的关系及本课程实验}
+
+Qiao 等人的 HIM 在洛伦兹模型中嵌入用户，用到原点的距离作为个体影响代理，再用自适应滑动窗口降低相邻候选的重叠\cite{him}。HIM 的“与模型无关”指选点和表示不需要显式 IC/LT 参数，但仍依赖所提供的传播实例。DeepSN 则把传播过程本身参数化。二者都可以在只有图和合成级联时运行，因此能在 Ciao 上用同一套 WIC 评估器对照；它们优化的内部对象仍然不同。HIM 先打个体分再局部改分，DeepSN 先拟合激活再按社区切预算。若 DeepSN 的覆盖率较低，可能来自代理欠拟合、硬选择不可导、训练级联过少，或层丛在该拓扑上没有学到比度更好的方向性，而不能直接写成“层丛一定弱于双曲几何”。
+
+本课程的实验分成两层，对应上述文献区分。第一层是作者协议：Jazz 网络、SIS、20\% 种子、单次训练，独立 100 次 SIS 评估，平均覆盖率 86.45\%。Jazz 约 198 个节点，作者实现里图规模曾写死为该值，说明这是原生入口真正对应的设置。第二层是组内协议：Ciao 无向信任图 7317 个用户、85205 条边，概率 $p=1/\max(\deg u,\deg v)$，预算 366，训练种子 42、43、44，每个种子 30 条合成级联，50 轮估计加 200 轮选点，评估种子基数 1042、每套种子 1000 轮 WIC。三种子平均激活 595.05 人，覆盖率 8.13\%，跨种子 95\% $t$ 区间（自由度为 2）为 $[544.63,645.47]$。HIM-ASW 在同一协议下三种子均值约 735.03 人、10.05\%。图哈希与概率编号一致，因此方向上可以并列书写；训练器、在线验证次数与选择器都不同，且区间很宽，不能写成算法排名。种子 44 明显低于 42 与 43，说明 DeepSN 对训练级联抽样敏感，三个种子不足以给出稳定排序。
+
+还应注意评估器切换。DeepSN 训练结束时若调用作者 IC（概率 $1/\mathrm{in\text{-}degree}$），Ciao 上会看到约 26\% 的覆盖率；同一批种子在组内 WIC 下只有约 8\%。这恰好印证第二节：换传播机制等于换题目。报告里只应把独立 WIC 当作与 HIM 对照的数字，并把作者 IC/SIS 标明为原生协议。
+
+\section{评价、局限与展望}
+
+把 related work 收束到可检验的主张，有三条。
+
+第一，层丛提供的是\emph{局部翻译}能力，不是自动的全局最优种子。Hansen--Ghrist 的谱理论和 Bodnar 等人的扩散实现，说明异配与角色差异可以被参数化；Battiloro、Maggs 与 TopoBenchmarkX 则说明高阶对象与评测协议同样重要。DeepSN 只用了图上的茎与边限制，没有进入单纯复形，因此它只调用了层丛工具箱的一部分。把未使用的高阶结构写成 DeepSN 的现成优势，并不诚实。
+
+第二，学习方法必须把神谕信息写清楚。RR 抽样\cite{borgs}与可扩展 IC 启发式\cite{chen2010}假定已知或可采样的活边过程；DeepSN 与 HIM 假定可获得传播实例。本课程的实例由 WIC 生成，评估器还是同一 WIC，学习方法看到的是评估过程的有限样本，而不是更弱的信息。若将来加入只使用图、不使用级联的度启发式作为对照，才能判断层丛代理是否真的利用了级联。
+
+第三，数据伦理与解释。Ciao 是信任与评分，不是转发日志\cite{etrust}。合成 WIC 便于三人共用一个数字，但会把“算法在该概率下的可达性”误写成“算法更会引导舆情”。SIS 在 Jazz 上的高覆盖率尤其容易造成这种误读。合理的表述是：在声明的模拟器上，种子集的期望规模如何；以及在更换模拟器后，排序是否稳定。
+
+后续工作应按这个标准加实验，而不是按论文表格追逐百分点。优先的是在同一 WIC 评估器上增加度与随机基线、把训练种子从三个扩到五个以收缩 $t$ 区间，以及检查社区分配是否真的降低了种子重叠。GBIM 若不能改写成同一用户集合上的同一目标，应继续作为多重图上的并列任务，而不是第三列排行榜。层丛方向本身仍值得关注：非线性层丛扩散、单纯注意力与标准评测集已经出现\cite{battiloro,maggs,topobench}，但它们要进入影响力最大化，必须先回答种子集的非加性如何进入茎上的扩散，而不是只把节点分类精度迁移过来。
+
+\section{结语}
+
+DeepSN 把影响力最大化写成“可学习的层丛扩散 $+$ 社区约束的种子赋值”。它承接的是 IC/LT 的组合定义\cite{kempe}、接触过程对反复感染的提醒\cite{pastor}、反向可达对模拟代价的改写\cite{borgs}，以及层丛拉普拉斯对异质限制映射的参数化\cite{hansen,bodnar}。本课程完成了作者 SIS 协议与组内 Ciao WIC 协议两套实验，后者与 HIM 共用图、概率、预算和评估随机流，三种子平均覆盖率约 8.13\%，低于 HIM-ASW 的约 10.05\%，但区间宽、训练器不同，不足以支持方法优劣的结论。相关工作若只比较百分点，会把模拟器选择写成模型能力；若比较信息假设、选择对象与评估器是否分离，才能把 DeepSN 放回它应在的位置：一种强调传播结构而非个体径向分数的可学习代理。
+
+\begin{thebibliography}{99}
+\raggedright
+\bibitem{kempe} D.~Kempe, J.~Kleinberg, and {\'E}.~Tardos, ``Maximizing the spread of influence through a social network,'' in \emph{Proc.\ 9th ACM SIGKDD Int.\ Conf.\ Knowl.\ Discovery Data Mining}, 2003, pp.~137--146. \href{https://doi.org/10.1145/956750.956769}{doi:10.1145/956750.956769}.
+\bibitem{pastor} R.~Pastor-Satorras and A.~Vespignani, ``Epidemic spreading in scale-free networks,'' \emph{Phys.\ Rev.\ Lett.}, vol.~86, no.~14, pp.~3200--3203, 2001. \href{https://doi.org/10.1103/PhysRevLett.86.3200}{doi:10.1103/PhysRevLett.86.3200}.
+\bibitem{chen2010} W.~Chen, C.~Wang, and Y.~Wang, ``Scalable influence maximization for prevalent viral marketing in large-scale social networks,'' in \emph{Proc.\ 16th ACM SIGKDD Int.\ Conf.\ Knowl.\ Discovery Data Mining}, 2010, pp.~1029--1038. \href{https://doi.org/10.1145/1835804.1835934}{doi:10.1145/1835804.1835934}.
+\bibitem{borgs} C.~Borgs, M.~Braverman, J.~Chayes, and B.~Lucier, ``Maximizing social influence in nearly optimal time,'' in \emph{Proc.\ 25th Annu.\ ACM-SIAM Symp.\ Discrete Algorithms}, 2014, pp.~946--957. \href{https://doi.org/10.1137/1.9781611973402.70}{doi:10.1137/1.9781611973402.70}.
+\bibitem{etrust} J.~Tang, H.~Gao, H.~Liu, and A.~Das~Sarma, ``eTrust: Understanding trust evolution in an online world,'' in \emph{Proc.\ 18th ACM SIGKDD Int.\ Conf.\ Knowl.\ Discovery Data Mining}, 2012, pp.~253--261. \href{https://doi.org/10.1145/2339530.2339574}{doi:10.1145/2339530.2339574}.
+\bibitem{kipf} T.~N.~Kipf and M.~Welling, ``Semi-supervised classification with graph convolutional networks,'' in \emph{Proc.\ 5th Int.\ Conf.\ Learn.\ Represent.}, 2017. \href{https://openreview.net/forum?id=SJU4ayYgl}{OpenReview}.
+\bibitem{deepinf} J.~Qiu, J.~Tang, H.~Ma, Y.~Dong, K.~Wang, and J.~Tang, ``DeepInf: Social influence prediction with deep learning,'' in \emph{Proc.\ 24th ACM SIGKDD Int.\ Conf.\ Knowl.\ Discovery Data Mining}, 2018, pp.~2110--2119. \href{https://doi.org/10.1145/3219819.3220077}{doi:10.1145/3219819.3220077}.
+\bibitem{hansen} J.~Hansen and R.~Ghrist, ``Toward a spectral theory of cellular sheaves,'' \emph{J.\ Appl.\ Comput.\ Topology}, vol.~3, pp.~315--358, 2019. \href{https://doi.org/10.1007/s41468-019-00038-7}{doi:10.1007/s41468-019-00038-7}.
+\bibitem{bodnar} C.~Bodnar, F.~Di~Giovanni, B.~P.~Chamberlain, P.~Li{\`o}, and M.~Bronstein, ``Neural sheaf diffusion: A topological perspective on heterophily and oversmoothing,'' in \emph{Adv.\ Neural Inf.\ Process.\ Syst.}, vol.~35, 2022. \href{https://proceedings.neurips.cc/paper_files/paper/2022/hash/1fd0d0695282f4d81705d5bb32d1e1d5-Abstract-Conference.html}{NeurIPS}.
+\bibitem{battiloro} C.~Battiloro, L.~Testa, L.~Giusti, S.~Sardellitti, P.~Di~Lorenzo, and S.~Barbarossa, ``Generalized simplicial attention neural networks,'' \emph{IEEE Trans.\ Signal Inf.\ Process.\ over Netw.}, 2024. \href{https://arxiv.org/abs/2203.02411}{arXiv:2203.02411}.
+\bibitem{topobench} L.~Telyatnikov, G.~Bern{\'a}rdez, M.~Montagna, P.~Basa{\v{z}}evi{\'c}, M.~Papillon, G.~Petrov{\'c}, et~al., ``TopoBenchmarkX: A framework for benchmarking topological deep learning,'' 2024. \href{https://arxiv.org/abs/2406.06642}{arXiv:2406.06642}.
+\bibitem{maggs} K.~Maggs, C.~Hacker, and B.~Rieck, ``Simplicial representation learning with neural $k$-forms,'' in \emph{Proc.\ 12th Int.\ Conf.\ Learn.\ Represent.}, 2024. \href{https://arxiv.org/abs/2308.17007}{arXiv:2308.17007}.
+\bibitem{deepsn} A.~Hevapathige, Q.~Wang, and A.~N.~Zehmakan, ``DeepSN: A sheaf neural framework for influence maximization,'' in \emph{Proc.\ AAAI Conf.\ Artif.\ Intell.}, vol.~39, no.~16, pp.~17177--17185, 2025. \href{https://doi.org/10.1609/aaai.v39i16.33888}{doi:10.1609/aaai.v39i16.33888}.
+\bibitem{him} H.~Qiao, S.~Feng, M.~Zhou, X.~Li, Y.~Ye, F.~Li, S.~Shang, and Y.-S.~Ong, ``Influence strength estimation in hyperbolic space for social influence maximization,'' \emph{IEEE Trans.\ Knowl.\ Data Eng.}, vol.~38, no.~7, pp.~4434--4448, 2026. \href{https://doi.org/10.1109/TKDE.2026.3683562}{doi:10.1109/TKDE.2026.3683562}.
+\end{thebibliography}
+\end{document}
