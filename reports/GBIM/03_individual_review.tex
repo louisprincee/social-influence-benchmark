@@ -1,0 +1,118 @@
+\documentclass[12pt,a4paper]{article}
+
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage[hidelinks]{hyperref}
+\linespread{1.25}
+
+\title{A Survey of Clustering, Diffusion, and Representation Learning in Social Networks}
+\author{}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+The methodology of social network analysis can be understood along three mutually nested levels: the clustering level answers ``which groups constitute the network,'' the diffusion level answers ``how influence crosses group boundaries,'' and the representation level provides the computable vectorized foundation for the former two. This paper reviews representative recent work around these three levels. At the clustering level, the modularity-optimization line, evolving from Louvain to Leiden, has resolved the problem of guaranteeing community connectivity \cite{ref1,ref2}, while the convergence of deep learning and dynamic community detection has shifted the focus from static partitions to temporal evolution \cite{ref3,ref4,ref5}. At the diffusion level, the Independent Cascade and Linear Threshold models constitute the standard foundation of influence maximization \cite{ref6}, and the tension between the approximation guarantee of greedy algorithms and subsequent scalable approximations and heuristics continues to shape the problem structure of the field \cite{ref7,ref9}. At the representation level, the random-walk framework of Node2Vec and the inductive neighborhood aggregation of GraphSAGE represent two paradigms---``embedding lookup'' and ``function generation,'' respectively \cite{ref10,ref11}---while contrastive learning on dynamic networks further incorporates temporal information into the representation objective \cite{ref12}. Recent trends indicate that the three levels are becoming deeply intertwined: community structure is used as a prior for influence estimation, graph neural networks serve both community detection and diffusion prediction \cite{ref4}, and the intervention of large language models may redefine the relationship between ``structural signals'' and ``semantic signals'' \cite{ref13}. The paper concludes by discussing the open tensions within this intersecting landscape.
+\end{abstract}
+
+\section{Introduction}
+
+Social network analysis has long faced a structural methodological difficulty: a network is simultaneously a group phenomenon, a diffusion phenomenon, and a representation problem. Users aggregate into communities, the bridging structure between communities determines whether information can cross locally dense regions and spread outward, and any algorithm that must run on large-scale networks must first transform nodes and edges into a low-dimensional, computable form. These three problems are often treated separately in empirical research, but at the methodological level they share the same set of objects---graph structure, node attributes, and the temporal dimension---and thus permeate one another.
+
+This paper organizes the review along the thread of ``clustering--diffusion--representation,'' surveying the core advances and recent trends in the three directions. This division is not intended to establish strict problem boundaries, but to provide a coordinate system for locating the literature. Section 2 discusses community discovery and clustering, focusing on the connectivity correction of modularity optimization, the introduction of deep learning methods, and the rise of dynamic community detection \cite{ref1,ref2,ref3,ref5}. Section 3 discusses influence maximization and diffusion modeling, tracing the line from Kempe et al.'s foundational formalization to current scalable methods for dynamic and multiplex networks \cite{ref6,ref7,ref8}. Section 4 discusses graph representation learning, comparing the random-walk paradigm and the inductive graph neural network paradigm \cite{ref10,ref11}, and touches on contrastive learning on dynamic networks \cite{ref12}. Section 5 synthesizes the cross-cutting trends of the three directions and identifies unresolved methodological tensions \cite{ref13}.
+
+\section{Clustering and Community Detection in Social Networks}
+
+\subsection{The Modularity Optimization Line: From Louvain to Leiden}
+
+The most mature technical line in community detection takes modularity as its objective function. The Louvain algorithm proposed by Blondel et al.\ in 2008 pushed modularity optimization into the feasible range for networks with tens of millions of nodes through a two-stage iteration of local moving and aggregation, and its computational efficiency long served as the performance benchmark for this line \cite{ref1}. However, Louvain's local moving strategy has a structural defect: it may produce ``badly connected'' or even internally disconnected communities---nodes are assigned to a community, but the path between such a node and other nodes in the community must pass outside the community.
+
+The Leiden algorithm proposed by Traag, Waltman, and van Eck in 2019 is designed precisely to address this defect \cite{ref2}. Leiden adds a refinement stage after local moving, performing internal splitting and re-merging on each preliminary community, thereby guaranteeing that every community in the final partition is connected; experiments show that Leiden not only provides the connectivity guarantee that Louvain lacks, but also improves both running speed and partition quality \cite{ref2}. The significance of this evolution goes beyond algorithmic engineering: it reveals the potential conflict between ``objective function value'' and ``structural interpretability'' in modularity optimization, and the refinement stage is essentially an approximate satisfaction mechanism for a connectivity constraint introduced within the modularity framework.
+
+\subsection{Learning-Driven Community Detection and the Evaluation Ecosystem}
+
+As network scale and attribute dimensionality grow simultaneously, the limitations of topology-only modularity methods in heterogeneous networks and attribute-rich scenarios become increasingly apparent. Nooribakhsh et al.'s 2024 systematic mapping of machine-learning-based community detection in social networks, covering 246 papers, shows that unsupervised methods (represented by k-means) account for 41.46\% of identified methods, while the use of deep learning has risen significantly since 2020; among evaluation metrics, normalized mutual information (NMI) ranks first with a usage frequency of 53.25\%, and the Zachary karate club is the most commonly used benchmark dataset \cite{ref3}. This description of the ``evaluation ecosystem'' is itself of methodological value: the dominance of NMI means that most studies still assume the existence of a comparable ground-truth partition, whereas in real social networks this assumption often does not hold, and the use of internal metrics such as modularity or coverage is constrained by the resolution limit problem \cite{ref3}.
+
+On the deep learning side, the 2025 systematic review by El-Moussaoui et al., screening 19 studies from ACM, Springer, Scopus, ScienceDirect, and IEEE Xplore, identifies graph neural networks, autoencoders, and convolutional neural networks as the three most commonly used community detection architectures, while listing scalability, interpretability, and adaptability across network types as three insufficiently addressed challenges \cite{ref4}. This judgment corroborates observations in the field of dynamic community detection: performance gains of deep models on static benchmarks do not automatically translate into stable partitioning capability on evolving networks \cite{ref5}.
+
+\subsection{Dynamic Community Detection: From Snapshot Sequences to Continuous Evolution}
+
+The community structure of real social networks changes continuously over time, making dynamic community detection a relatively independent methodological branch. A 2025 review classifies dynamic community detection algorithms into heuristic/modularity-based, metaheuristic, deep learning, and hybrid deep learning categories, and points out that the network instability of existing deep learning methods during training impairs detection accuracy, while hybridizing deep learning with heuristic or metaheuristic algorithms to simultaneously obtain structural priors and representation capability is a path that remains to be systematically explored \cite{ref5}. In terms of representation, dynamic networks are typically modeled as snapshot sequences $G=[G_1,\dots,G_T]$, from which two strategies derive: snapshot-based independent detection runs a static algorithm at each time step and then compares results, while continuous detection uses the partition information from the previous moment to guide the current partition \cite{ref5}. The former is sensitive to topological abrupt changes, while the latter may lag behind real community reorganization due to path dependence. How to balance these two biases remains the core tension in dynamic clustering.
+
+\section{Diffusion Modeling and Influence Maximization}
+
+\subsection{Problem Formalization and Two Standard Diffusion Models}
+
+The modern formalization of influence maximization (IM) was established by Kempe, Kleinberg, and Tardos in 2003: given a network and a budget $k$, select $k$ seed nodes to maximize the expected influence spread under a certain diffusion model, and prove that the problem is NP-hard under the Independent Cascade and Linear Threshold models, while the influence function is monotone and submodular, so that the greedy algorithm yields a $(1-1/e)$ approximation guarantee \cite{ref6}. The Independent Cascade model treats activation on each edge as a Bernoulli event occurring independently with a certain probability, while the Linear Threshold model requires the sum of influence weights from activated neighbors to exceed an individual threshold \cite{ref6}. These two models remain the default foundation for the vast majority of IM algorithms and experiments to this day: a 2025 work still uses IC and LT as the basic diffusion models, proposing to compute influence spread by reducing activation probability overlap and to select the initial node set, with running times on large-scale real networks significantly shorter than mainstream baselines \cite{ref9}.
+
+\subsection{Scalability, Heuristics, and Dynamic Networks}
+
+The NP-hardness of IM stems from two mutually reinforcing factors: network scale and dynamics. Jaouadi and Ben Romdhane's 2024 survey uses ``static networks versus dynamic networks'' as its classification axis, systematically organizing IM models, and points out that influence maximization in dynamic networks (where topology or information content evolves over time) remains a far more difficult task than in the static case \cite{ref7}. In this landscape, research lines roughly fall into two branches. One branch pursues scalable reformulations along the greedy framework, reducing the marginal computation cost of each seed selection round through lazy evaluation, sketching methods, or approximate influence estimation \cite{ref7}; the other abandons approximation guarantees and instead designs heuristic indicators based on degree, betweenness, community structure, or percolation theory, in exchange for linear or near-linear time complexity \cite{ref7}. The trade-off between these two branches is not purely a technical preference: approximation guarantees on large-scale dynamic networks often come with prohibitive computational constants, while heuristic methods, although performing well on specific networks, lack transferability guarantees across networks \cite{ref7}.
+
+\subsection{Multiplex Networks and the Complication of Diffusion Environments}
+
+A notable recent turn is the extension of IM from single-layer networks to multiplex networks. The same set of users is simultaneously active on multiple platforms such as Facebook, Twitter, and Instagram, information can migrate between layers, and seed selection thus faces cross-layer coordination problems. A 2024 theoretical review proposes multiplex influence maximization (MxIM) as an independent problem, pointing out that directly adapting IC or LT to multilayer structures is a non-trivial task, and that MxIM remains NP-hard under multilayer structures \cite{ref8}. The methodological significance of this direction lies in forcing researchers to re-examine the measurement basis of ``influence'': in single-layer networks, influence spread is mainly determined by path reachability and edge activation probabilities; in multiplex networks, the same pair of users may have different relationship strengths on different layers, and the inter-layer coupling pattern itself becomes a first-order variable affecting diffusion outcomes \cite{ref8}. Most existing MxIM algorithms still inherit the greedy or heuristic skeleton of single-layer IM, and the temporal and causal structure of inter-layer diffusion has not been sufficiently formalized, constituting a structural gap in current diffusion research \cite{ref8}.
+
+\section{Graph Representation Learning and Social Network Embedding}
+
+\subsection{The Random Walk Paradigm and Node2Vec}
+
+An early breakthrough in graph representation learning came from transferring the skip-gram idea from natural language processing to network structure. Node2Vec, proposed by Grover and Leskovec in 2016, generates node sequences through biased second-order random walks and then learns embeddings using negative sampling and stochastic gradient descent; its key design is to interpolate between breadth-first and depth-first walk behavior through parameters $p$ and $q$, thereby capturing both homophily (community proximity) and structural equivalence (role similarity) \cite{ref10}. Node2Vec represents an embedding-lookup paradigm: each node corresponds to a learnable vector, and once training is complete, the embedding is static; the addition of new nodes requires retraining or approximate inference \cite{ref10}.
+
+\subsection{Inductive Graph Neural Networks: GraphSAGE and Beyond}
+
+GraphSAGE (Hamilton et al., 2017) addresses precisely this limitation \cite{ref11}. Instead of learning independent embeddings for each node, it learns a set of aggregation functions that generate embeddings by sampling and aggregating the local neighborhood features of nodes, thus being able to handle nodes unseen during training in an inductive manner \cite{ref11}. This ``function generation'' paradigm aligns well with the reality of social networks: social networks continuously admit new users, and inductive representations are more suitable for this scenario than transductive embeddings. At the experimental level, the 2024 comparative study by Oldenhof and Agachan systematically compares Node2Vec, GraphSAGE, and graph attention networks on networks such as BlogCatalog, Wikipedia, and PPI, providing a reproducible reference for behavioral differences among embedding methods on node classification and link prediction tasks. A 2023 study reports from the perspective of classification tasks that GraphSAGE outperforms Node2Vec on several evaluation metrics, consistent with the advantage of inductive aggregation in exploiting node features.
+
+However, inductive capability is not without cost. Neighborhood aggregation is essentially a local operator, and as network scale increases, the relative importance of local topology and attribute signals may decline; moreover, deep GNNs face the over-smoothing problem, where repeated aggregation makes representations of different nodes converge, thereby weakening discriminability.
+
+\subsection{Contrastive Learning on Dynamic Networks}
+
+Extending representation learning from static to dynamic graphs poses the core difficulty of encoding both topological structure and temporal evolution in the embedding. The DNCL (Dynamic Network Contrastive Learning) model proposed in 2024 explicitly targets this problem: it constructs two objectives, intra-snapshot contrast and inter-snapshot contrast, where the former captures the topological and feature structure at the current moment, while the latter encodes evolutionary information by maximizing the mutual information of nodes across different time steps and different views, thereby avoiding the error accumulation and over-dependence on local details caused by generative reconstruction of each snapshot \cite{ref13}. This design resonates with the continuous strategy in dynamic community detection: both attempt to find a middle ground between ``exploiting historical information'' and ``adapting to structural abrupt changes,'' but DNCL operates at the representation level, and its output can serve multiple downstream tasks such as link prediction, node classification, and clustering, thus possessing stronger task generality \cite{ref12}.
+
+A broader trend is that the application of graph neural networks in social networks has formed a task spectrum from node classification and link prediction to community detection and rumor detection; a 2025 review, while organizing this spectrum, points out that the integration of GNNs with large language models, dynamic graph learning, and federated learning are three emerging frontier directions, while scalability, noise robustness, and privacy protection remain key bottlenecks constraining practical deployment.
+
+\section{Cross-Cutting Trends and Open Tensions}
+
+Placing the above three threads side by side reveals that they are not developing in parallel, but have begun to form substantive intersections in recent years.
+
+First, community structure as a prior for diffusion. Influence maximization algorithms increasingly exploit community partition information during seed selection: dense intra-community connections mean that influence can spread efficiently locally, while bridging nodes between communities determine cross-group reachability \cite{ref7,ref8}. This idea has been reflected in community-based influence maximization methods, but its theoretical status remains ambiguous---whether community structure should be regarded as a heuristic means of reducing the search space, or should be integrated into the definition of the influence function itself, has not yet reached consensus \cite{ref7}.
+
+Second, GNNs serve clustering, diffusion, and representation simultaneously. Graph neural networks are both a common architecture for community detection and a common tool for diffusion prediction, and their training process is itself learning representations \cite{ref4}. This ``one architecture, multiple tasks'' situation creates evaluation difficulties: a GNN that performs excellently on node classification benchmarks does not necessarily have the same advantage on dynamic community detection or influence estimation, and systematic cross-task comparisons in the current literature remain scarce \cite{ref13}.
+
+Third, the intervention of large language models is changing the relationship between ``structural signals'' and ``semantic signals.'' Work in 2025 has begun to explore using large language models to guide seed expansion in community discovery, combining the semantic information carried by node text content with graph structural signals \cite{ref13}. The prospects and risks of this direction are both significant: semantic signals can help identify hidden communities that are topologically inconspicuous but semantically coherent, but the priors of language models may also introduce biases unrelated to the network generation mechanism \cite{ref13}.
+
+Under these cross-cutting trends, the core tension running through the three levels can be summarized as the trade-off between scalability and interpretability. The fast line of modularity optimization is oriented toward objective function maximization, but may produce structurally uninterpretable partitions \cite{ref1,ref2}; the approximation guarantee of greedy influence maximization comes at the cost of high computational expense \cite{ref6,ref7}; the representational power of GNNs is accompanied by over-smoothing and black-box nature \cite{ref11}. Leiden's refinement stage, DNCL's contrastive objectives, and the sampling strategies in inductive aggregation can all be understood as technical attempts to find local balance within this tension, but no single scheme is simultaneously satisfactory across all three levels \cite{ref2,ref12,ref11}. For course projects targeting social networks, this tension itself constitutes a valuable research entry point: reproducing several representative algorithms on a new dataset and systematically comparing their performance in clustering quality, diffusion effectiveness, and representation transferability, while recording changes in computational overhead and interpretability, may reveal the real differences between methods more than merely pursuing improvement on a single metric.
+
+\begin{thebibliography}{99}
+
+\bibitem{ref1} Blondel V D, Guillaume J L, Lambiotte R, et al. Fast unfolding of communities in large networks. \textit{Journal of Statistical Mechanics: Theory and Experiment}, 2008, 2008(10): P10008.
+
+\bibitem{ref2} Traag V A, Waltman L, van Eck N J. From Louvain to Leiden: guaranteeing well-connected communities. \textit{Scientific Reports}, 2019, 9(1): 5233.
+
+\bibitem{ref3} Nooribakhsh M, Fernandez-Diego M, Gonzalez-Ladron-De-Guevara F, et al. Community detection in social networks using machine learning: a systematic mapping study. \textit{Knowledge and Information Systems}, 2024.
+
+\bibitem{ref4} El-Moussaoui M, Hanine M, Kartit A, et al. A systematic review of deep learning methods for community detection in social networks. \textit{Frontiers in Artificial Intelligence}, 2025, 8: 1572645.
+
+\bibitem{ref5} A comprehensive review of dynamic community detection: taxonomy, challenges, and future directions. \textit{Computers, Materials and Continua}, 2025, 85(3): 4375-4405.
+
+\bibitem{ref6} Kempe D, Kleinberg J, Tardos \'E. Maximizing the spread of influence through a social network. \textit{Proceedings of the 9th ACM SIGKDD International Conference on Knowledge Discovery and Data Mining}, 2003: 137-146.
+
+\bibitem{ref7} Jaouadi M, Ben Romdhane L. A survey on influence maximization models. \textit{Expert Systems with Applications}, 2024, 252: 123429.
+
+\bibitem{ref8} A theoretical review on multiplex influence maximization models: theories, methods, challenges, and future directions. \textit{Expert Systems with Applications}, 2024, 238: 122302.
+
+\bibitem{ref9} Influence spread maximization in social networks via activation probability overlap reduction. \textit{IEEE Access}, 2025.
+
+\bibitem{ref10} Grover A, Leskovec J. node2vec: scalable feature learning for networks. \textit{Proceedings of the 22nd ACM SIGKDD International Conference on Knowledge Discovery and Data Mining}, 2016: 855-864.
+
+\bibitem{ref11} Hamilton W L, Ying R, Leskovec J. Inductive representation learning on large graphs. \textit{Advances in Neural Information Processing Systems}, 2017, 30.
+
+\bibitem{ref12} Contrastive representation learning on dynamic networks. \textit{Neural Networks}, 2024, 174: 106240.
+
+\bibitem{ref13} ComGPT: detecting local community structure with large language models. \textit{arXiv:2408.06658}, 2025.
+
+\end{thebibliography}
+
+\end{document}

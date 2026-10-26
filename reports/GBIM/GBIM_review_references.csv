@@ -1,0 +1,14 @@
+year,title,primary_source,recent_2024_2026,source_scope,teammate_overlap
+2008,Fast unfolding of communities in large networks,Journal of Statistical Mechanics: Theory and Experiment,no,journal,no
+2019,From Louvain to Leiden: guaranteeing well-connected communities,Scientific Reports,no,journal,no
+2024,Community detection in social networks using machine learning: a systematic mapping study,Knowledge and Information Systems,yes,journal,no
+2025,A systematic review of deep learning methods for community detection in social networks,Frontiers in Artificial Intelligence,yes,journal,no
+2025,"A comprehensive review of dynamic community detection: taxonomy, challenges, and future directions","Computers, Materials and Continua",yes,journal,no
+2003,Maximizing the spread of influence through a social network,Proceedings of the 9th ACM SIGKDD International Conference on Knowledge Discovery and Data Mining,no,conference,yes (DeepSN/HIM: kempe)
+2024,A survey on influence maximization models,Expert Systems with Applications,yes,journal,no
+2024,"A theoretical review on multiplex influence maximization models: theories, methods, challenges, and future directions",Expert Systems with Applications,yes,journal,no
+2025,Influence spread maximization in social networks via activation probability overlap reduction,IEEE Access,yes,journal,no
+2016,node2vec: scalable feature learning for networks,Proceedings of the 22nd ACM SIGKDD International Conference on Knowledge Discovery and Data Mining,no,conference,no
+2017,Inductive representation learning on large graphs,Advances in Neural Information Processing Systems,no,conference,no
+2024,Contrastive representation learning on dynamic networks,Neural Networks,yes,journal,no
+2025,ComGPT: detecting local community structure with large language models,arXiv:2408.06658,yes,preprint,no
