@@ -56,6 +56,12 @@ cd methods/HIM
 
 本机 `methods/HIM/.venv` 是按 [HIM requirements.txt](methods/HIM/requirements.txt) 重建的 Python 3.12.14 环境。不要把环境目录提交到 Git；组员应按依赖文件在自己的机器安装。源码中的复现修正已直接保存，组员无需另行应用补丁。
 
+HIM 于2026-10-30补充完成 Cora-ML、Power Grid、Facebook 各3次训练的 WIC/10% 复现、五种选择方法对照和结构权重诊断。ASW-J 未观察到稳定增益。详见 [多网络实验说明](methods/HIM/EXPANDED_REPRODUCTION.md)。
+
+继续实现并评估了 [HIM-C累计覆盖选择](methods/HIM/CUMULATIVE_COVERAGE.md)：四网络12个已有模型、新500轮配对模拟，部分设置改善原ASW，但CO消融未支持HIM先验的额外收益。原ASW-J负结果保留。
+
+最终报告已建立为 [LaTeX 项目](reports/final_report/main.tex) 与 [9页 PDF](reports/final_report/main.pdf)，HIM 复现及两轮选择器扩展已写入；其他成员部分沿用当前团队记录，原 milestone 保留。
+
 ## 三人如何协作
 
 首次开始自己的实验时建立分支，例如：
@@ -87,7 +93,7 @@ git push -u origin li-deepsn
 
 DeepSN 默认使用 SIS。入口现已读取命令行；Jazz 原生 SIS 已在 Mac Air CPU 上跑通。Ciao 已与 HIM 对齐图、WIC 概率、预算 366、训练种子 42/43/44 和评估种子 1042；DeepSN 三种子平均覆盖率约 8.13%，HIM-ASW 约 10.05%，因优化器不同且区间很宽，不能写成排名。GBIM 优化的是用户—信息种子对，目标与 HIM 的普通用户覆盖率不同；完成任务适配并验证后才可横向排名。详见各自指南。
 
-老师要求至少三种算法在新的有趣数据集上比较；Ciao 已确定为共享新数据集，HIM 还需 degree/random 基线。DeepSN 的 Ciao 三种子独立评估已完成，正式三人排名仍需冻结评估器并补齐 GBIM。Milestone 为 3–5 页；个人英文综述至少 1000 词、至少 10 篇文献，其中近三年至少 5 篇，与任一其他组员重复文献不超过 3 篇。报告只写实际完成的实验，LaTeX 使用双栏。
+老师要求至少三种算法在新的有趣数据集上比较；Ciao 已确定为共享新数据集，HIM 已补齐 Degree/Random 基线，并实现 ASW-J 选择器扩展及三模型对照；当前不支持 ASW-J 优于原 ASW。DeepSN 的 Ciao 三种子独立评估已完成，正式三人排名仍需冻结评估器并补齐 GBIM。Milestone 为 3–5 页；个人英文综述至少 1000 词、至少 10 篇文献，其中近三年至少 5 篇，与任一其他组员重复文献不超过 3 篇。报告只写实际完成的实验，LaTeX 使用双栏。
 
 ## 作者代码来源与本地修改
 

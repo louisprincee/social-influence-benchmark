@@ -1,0 +1,71 @@
+{
+  "protocol": {
+    "status_at_creation": "Frozen before examining extension outcomes",
+    "extension": "ASW-J (course implementation, no literature-priority claim)",
+    "formula": "w_new=(1-alpha)*softmax(1/d_L^2)+alpha*J/sum(J), J=|N(c) intersect N(v)|/|N(c) union N(v)|; if all J=0, retain geometric weights. Keep original LDO(c)/degree(c) penalty scale, graph-neighbor candidate restriction and sliding window.",
+    "primary_alpha": 0.5,
+    "alpha_selection": "Fixed before running; no tuning on evaluation outcomes",
+    "dataset": "ciao",
+    "training_seeds": [
+      42,
+      43,
+      44
+    ],
+    "seed_budget": 366,
+    "evaluation_seed_base": 1042,
+    "rounds": 1000,
+    "methods": [
+      "ASW",
+      "MD",
+      "ASW-J",
+      "Degree",
+      "Random"
+    ],
+    "training": "Reuse the three existing frozen checkpoints; no retraining or new architecture",
+    "baselines": "Recompute ASW and MD seed sets and require exact equality to archived sets before reusing their matching 1000 outcomes. Degree uses degree descending, node ID ascending tie break. Random uses local RNG with each training-seed integer, representing seed-set sampling, not model training.",
+    "deduplication": "Identical sorted seed set on the same graph, probability bank, evaluator and replicate seeds reuses exactly the same evaluation outcomes; record source.",
+    "primary_comparison": "ASW-J minus ASW across three trained checkpoints, paired t interval df=2; report seed-set changes and selection time even if no gain",
+    "scope": "Exploratory course extension on one graph, one synthetic probability bank, one budget and three checkpoints; the evaluation stream is reused from the prior exploratory study. No confirmatory holdout or universal-superiority claim."
+  },
+  "protocol_sha256": "c5110301f12d5800fc0fa195f655337f21891c622c31f169faf8ef97ef5a015d",
+  "training_seeds": [
+    42,
+    43,
+    44
+  ],
+  "coverage_percent_mean": {
+    "ASW": 10.045560566716778,
+    "MD": 10.040485627078493,
+    "ASW-J": 10.04120541205412,
+    "Degree": 9.727975946426131,
+    "Random": 8.107489408227416
+  },
+  "mean_selection_seconds": {
+    "ASW": 0.29622101366597536,
+    "MD": 0.0010902639963508893,
+    "ASW-J": 0.09442193033464719,
+    "Degree": 0.002798917004838586,
+    "Random": 0.00017351366113871336
+  },
+  "ASW-J_changed_nodes": [
+    1,
+    2,
+    1
+  ],
+  "ASW-J_minus_ASW_per_training_seed_activated": [
+    -0.737,
+    -0.716,
+    0.497
+  ],
+  "ASW-J_minus_ASW_mean_activated": -0.3186666666666666,
+  "ASW-J_minus_ASW_ci95_t_df2_activated": [
+    -2.0736257177236768,
+    1.4362923843903437
+  ],
+  "run_artifacts": [
+    "structural_asw_ciao_seed42_2026-10-29.json",
+    "structural_asw_ciao_seed43_2026-10-29.json",
+    "structural_asw_ciao_seed44_2026-10-29.json"
+  ],
+  "interpretation": "Exploratory fixed-checkpoint selector extension, not a new representation model. Three embeddings, one graph/budget/probability bank. Degree is one deterministic seed set repeated, Random uses three independently sampled sets. Timing is a single wall-clock measurement, not a repeated performance benchmark. No test-stream tuning was performed."
+}

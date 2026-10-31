@@ -1,0 +1,10 @@
+{
+  "status": "pass",
+  "HIM_behavior_tests": 9,
+  "root_unittest_discovery": "0 tests; not evidence of whole-repository pass",
+  "run_count": 3,
+  "methods_per_run": 5,
+  "replicates_per_method": 1000,
+  "new_simulations": 7000,
+  "validated": "budgets, replicate ranges, means, paired differences, df=2 CI, checkpoint/protocol/selector hashes, random seed-set construction, deterministic Degree, illustrative graph values"
+}

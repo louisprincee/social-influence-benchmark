@@ -1,0 +1,24 @@
+{
+  "status": "pass",
+  "training_runs": 9,
+  "datasets": [
+    "cora_ml",
+    "power_grid",
+    "facebook"
+  ],
+  "evaluation_rounds_per_set": 500,
+  "archived_nonreused_simulations": 21500,
+  "protocol_sha256": "c7c7139dbc2bf769ebb392d24e95169428f7721cac1fd0b948b8d95a7e30c772",
+  "summary_sha256": "f724daa2b2aa16edb515ca0e2787f0cdfb90ac1dac0f00bfd7d897811e646904",
+  "verifier_sha256": "243c652a74735af1a22384945697679818a98a1ae4476ce65122ca3222177b1f",
+  "checks": [
+    "Input, cache and checkpoint hashes",
+    "Nine independent training seeds and caches",
+    "Exact seed budgets",
+    "Raw outcomes and means",
+    "Conditional and across-training intervals",
+    "Random seed reproducibility",
+    "Identical-set reuse provenance",
+    "Alpha=0 and alpha=.5 identities"
+  ]
+}

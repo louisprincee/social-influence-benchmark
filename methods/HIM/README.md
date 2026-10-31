@@ -91,7 +91,7 @@ python evaluate_checkpoint.py \
 - 旧的两实例/单 epoch Ciao smoke test 仅用于确认流水线可执行，不应与正式训练结果混为一谈。
 - Ciao rating/trust 记录不是级联或真实意见采纳标签；当前 spread 全是合成扩散。Ciao 原始数据也不应由本仓库再分发。
 
-逐种子结果、完整 replicate 数据与哈希保存在 [`../../results/HIM/ciao_wic_three_training_seeds_2026-10-11.json`](../../results/HIM/ciao_wic_three_training_seeds_2026-10-11.json) 及同目录的逐种子 JSON。下一步是补充 Degree/Random 控制，并与 DeepSN 对齐共同用户级评估协议。
+逐种子结果、完整 replicate 数据与哈希保存在 [`../../results/HIM/ciao_wic_three_training_seeds_2026-10-11.json`](../../results/HIM/ciao_wic_three_training_seeds_2026-10-11.json) 及同目录的逐种子 JSON。Degree/Random 控制与 ASW-J 扩展已于 2026-10-29 完成，见下文；与 DeepSN 的共同用户级协议仍需进一步完善。
 
 ## 引用
 
@@ -104,3 +104,38 @@ python evaluate_checkpoint.py \
   doi     = {10.1109/TKDE.2026.3683562}
 }
 ```
+
+## 2026-10-29：ASW-J 选择器扩展已实现
+
+新增独立模块 `methods/HIM/structural_selection.py`，保留原作者选择器不变。它把几何注意力与开放邻域 Jaccard 重叠混合，alpha 在评估前固定为 0.5；同一表示、预算和原惩罚总量下进行对照。新增 9 项行为测试全部通过。
+
+三个已有 Ciao 模型、每组 1000 轮原模拟器评估及 Degree/Random 控制已完成。ASW-J 平均覆盖率 10.0412%，原 ASW 10.0456%，平均激活差 -0.319 个节点，95% t 区间 [-2.074, 1.436]；不支持稳定收益。该结果是已实现的课程方法扩展与探索性验证，不是已证明的性能改进，也不主张文献首创。完整公式、复现范围、运行方法和限制见 [STRUCTURAL_ASW.md](STRUCTURAL_ASW.md)；完整结果见 `../../results/HIM/structural_asw_ciao_summary_2026-10-29.json`。
+
+## 2026-10-30：三个论文网络的补充复现
+
+新增 Cora-ML、Power Grid、Facebook 各三个训练种子（142/143/144），共9次训练，WIC、10%预算、30级联；每个集合在新随机流上评估500次，比较 ASW、MD、ASW-J、Degree、Random。ASW 平均覆盖率分别为38.1440%、18.7217%、31.8099%。ASW-J 相对原 ASW 的三个网络区间均包含零，Ciao亦如此；Facebook 的 Random 观测均值略高于 HIM。不能称为普遍性能提升或全论文完整复现。
+
+完整范围、论文概率库差异、逐网络结果、运行命令与思考见 [EXPANDED_REPRODUCTION.md](EXPANDED_REPRODUCTION.md)。新实验记录位于 results/HIM/expanded_*2026-10-30.json；9个模型及独立训练缓存保留在本机。新增评估调度器会补上作者 Power Grid 配置缺少的 sample_ratio=.2，种子保存修正支持 NumPy 编号。
+
+## 2026-10-30：累计覆盖选择器 HIM-C
+
+继续实现全局累计一跳覆盖选择，固定已有HIM表示及统一先验参数，并加入不使用HIM先验的CO对照。四网络各三checkpoint、每集合新的500次配对模拟已完成。HIM-C相对ASW的未校正区间在Power Grid、Facebook、Ciao为正，Cora-ML跨零；CO消融未支持HIM先验带来稳定额外收益。收益有条件，不能称为通用的新HIM模型。详见 [CUMULATIVE_COVERAGE.md](CUMULATIVE_COVERAGE.md)。
+
+## 2026-10-31：提交前修正与重验
+
+修正 ASW-J 在带自环图上的归一化：总惩罚继续使用原 ASW 的 `graph.degree`，Jaccard 明确采用排除自身的开放邻域。补充自环回归与缓存指纹测试，当前26项HIM测试通过。Ciao 恢复已有结果时先重新选点，并核对协议、图、概率、checkpoint、源结果和当前集合，避免静默复用过期结果。
+
+保留首轮源码快照及旧结果原始哈希，不把旧训练记录改写成使用修正版。新增 `verify_structural_revision.py`，重选全部12个checkpoint的五种主方法后，与原归档逐个一致；因此既有传播结果和PPT中的结论无需改变，未新增传播模拟。历史其他alpha诊断仍属于当时源码版本，不据此调参。完整记录见 `results/HIM/structural_revision_verification_2026-10-31.json`。
+
+核验顺序（从仓库根目录）：
+
+```sh
+OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 methods/HIM/.venv/bin/python methods/HIM/verify_structural_revision.py
+PYTHONPATH=methods/HIM methods/HIM/.venv/bin/python -m unittest discover -s methods/HIM/tests -v
+OMP_NUM_THREADS=1 methods/HIM/.venv/bin/python methods/HIM/verify_expanded_reproduction.py
+OMP_NUM_THREADS=1 methods/HIM/.venv/bin/python methods/HIM/verify_coverage_selection.py
+```
+
+历史结果恢复必须具有与当前选择器及逐模型文件精确匹配的修订审计；任意其他源码变化会拒绝复用。重新训练应另设实验协议与结果目录，模型和缓存不随Git分发。
+
+旧的未完成恢复文件没有主实验集合审计，修订后会保守拒绝复用；当前12个完整归档的恢复和核验不受影响。

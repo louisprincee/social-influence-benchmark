@@ -32,3 +32,6 @@ model_state/
 .vscode/
 .idea/
 .ipynb_checkpoints/
+
+# 本地演示文稿和生成材料
+/output/

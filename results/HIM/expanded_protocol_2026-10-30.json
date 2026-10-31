@@ -1,0 +1,37 @@
+{
+  "date": "2026-10-30",
+  "datasets": [
+    "cora_ml",
+    "power_grid",
+    "facebook"
+  ],
+  "training_seeds": [
+    142,
+    143,
+    144
+  ],
+  "diffusion": "WIC",
+  "budget_percent": 10,
+  "training_instances": 30,
+  "max_epochs": 200,
+  "validation_rounds": 100,
+  "patience": 10,
+  "evaluation_seed_base": 100042,
+  "evaluation_rounds": 500,
+  "methods": [
+    "ASW",
+    "MD",
+    "ASW-J",
+    "Degree",
+    "Random"
+  ],
+  "alpha": 0.5,
+  "diagnostic_alphas": [
+    0.0,
+    0.25,
+    0.5,
+    0.75,
+    1.0
+  ],
+  "scope": "Reproduce author-code settings, not exact paper-wide results. Retain supplied probability banks. Power Grid missing sample_ratio explicitly set to 0.2. Alpha diagnostics do not evaluate or tune other alpha values. No optional stopping based on gains."
+}

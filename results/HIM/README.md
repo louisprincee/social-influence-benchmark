@@ -71,3 +71,35 @@ HIM 的 Ciao adapter 成功读取 7,317 个用户、85,205 条无向信任边，
 ## 整理说明
 
 所有已有结果与审计 JSON 保留原内容。历史清单与迁移检查中的 `reproduction/HIM/.venv` 是当时的环境入口，当前已简化为 `methods/HIM/.venv`；模型、数据与种子集路径保持有效。详细的第3、4步核验见 [实验结果检查](实验结果检查_2026-10-09.md)。
+
+## 2026-10-29：选择器结构扩展与简单基线
+
+已实现课程扩展 ASW-J，固定 alpha=0.5，复用三个已有模型而不重新训练；原 ASW/MD 的种子集合重新计算并与归档核对后，复用相同协议的历史评估。新增 7,000 轮实际传播模拟，用于 ASW-J、Degree 和三个 Random 集合；相同 Degree 集合的结果只模拟一次，跨模型复用并记录来源。
+
+| 方法 | 三模型/种子集合的平均覆盖率 |
+|---|---:|
+| ASW | 10.0456% |
+| MD | 10.0405% |
+| ASW-J | 10.0412% |
+| Degree | 9.7280% |
+| Random | 8.1075% |
+
+ASW-J 在三个模型中各替换 1、2、1 个种子，相对原 ASW 的平均激活差为 -0.319 个节点，95% t 区间 [-2.074,1.436]。不支持稳定增益。Degree 是一个确定性集合，Random 是三个抽样集合，不能把它们当作三个训练模型。新扩展不主张文献首创，原方法的表示学习结构不变。
+
+定义与边界见 `methods/HIM/STRUCTURAL_ASW.md`（从仓库根目录定位）。完整逐轮数据、选择耗时和哈希见 `structural_asw_ciao_seed*_2026-10-29.json`，汇总见 `structural_asw_ciao_summary_2026-10-29.json`，预先固定的协议见 `structural_asw_protocol_2026-10-29.json`，一致性检查见 `structural_asw_verification_2026-10-29.json`。
+
+## 2026-10-30：多网络补充复现
+
+已完成 Cora-ML、Power Grid、Facebook 各三个新训练种子，WIC/10%预算，每次30级联、每集合500次新评估随机流。原ASW平均覆盖率分别为38.1440%、18.7217%、31.8099%。五种选择方法的逐模型原始结果见 expanded_<dataset>_s<seed>_2026-10-30.json，汇总见 expanded_summary_2026-10-30.json，一致性核验见 expanded_verification_2026-10-30.json。
+
+ASW-J 在上述三个网络及 Ciao 的跨训练区间全部包含零。完整解释及与论文设置的差异见 ../../methods/HIM/EXPANDED_REPRODUCTION.md；原2026-10-09单模型结果保留为历史记录，未被新三模型均值替代或覆盖。
+
+## 2026-10-30：HIM-C 新随机流验证
+
+12个已有checkpoint，ASW/HIM-C/CO三方法，各500轮模拟，随机种子基数200042。汇总 coverage_summary_2026-10-30.json，逐模型 coverage_<dataset>_s<seed>_2026-10-30.json，协议 coverage_protocol_2026-10-30.json，核验 coverage_verification_2026-10-30.json。不与之前不同评估随机流的结果直接相减。
+
+HIM-C相对ASW平均激活差：Cora-ML −3.937、Power Grid +89.013、Facebook +20.638、Ciao +42.315；后三个未校正95%跨训练区间为正。HIM-C未显示对CO的稳定额外收益，Power Grid/Facebook上CO反而更高。完整定义与归因限制见 ../../methods/HIM/CUMULATIVE_COVERAGE.md。
+
+## 2026-10-31：选择器修订核验
+
+自环归一化与开放邻域定义修正后，全部12模型的五种主方法选点与历史归档一致。记录见 `structural_revision_verification_2026-10-31.json`。旧结果及其源码哈希保留原值，修正版通过精确文件指纹与集合重选审计绑定，未新增传播模拟，原覆盖率与区间不变。

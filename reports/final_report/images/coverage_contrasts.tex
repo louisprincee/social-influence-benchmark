@@ -1,0 +1,20 @@
+\begin{minipage}{0.49\textwidth}\centering
+\begin{tikzpicture}\begin{axis}[
+width=0.90\linewidth,height=5.5cm,title={HIM-C minus ASW},xmin=-40,xmax=120,xtick={-40,0,40,80,120},ymin=0.5,ymax=4.5,ytick={1,2,3,4},yticklabels={Ciao,Facebook,Power Grid,Cora-ML},xlabel={Additional activated users},axis y line*=left,y axis line style={draw=none},ytick style={draw=none},axis x line*=bottom,xmajorgrids=true,grid style={gray!15},tick align=outside,tick label style={font=\scriptsize},label style={font=\scriptsize},title style={font=\small},scale only axis=false]
+\addplot[gray!60,dashed,no marks] coordinates {(0,0.5) (0,4.5)};
+\addplot+[only marks,mark=*,mark size=2pt,blue!65!black,mark options={fill=blue!65!black,draw=blue!65!black},error bars/.cd,x dir=both,x explicit,error bar style={blue!65!black},error mark options={line width=0.7pt}] coordinates {
+(-3.936666667,4) +- (19.726990586,0)
+(89.012666667,3) +- (8.652594107,0)
+(20.638000000,2) +- (17.455544134,0)
+(42.315333333,1) +- (6.837076900,0)
+};\end{axis}\end{tikzpicture}\end{minipage}
+\begin{minipage}{0.49\textwidth}\centering
+\begin{tikzpicture}\begin{axis}[
+width=0.90\linewidth,height=5.5cm,title={HIM-C minus coverage-only CO},xmin=-12,xmax=4,xtick={-12,-8,-4,0,4},ymin=0.5,ymax=4.5,ytick={1,2,3,4},yticklabels={Ciao,Facebook,Power Grid,Cora-ML},xlabel={Additional activated users},axis y line*=left,y axis line style={draw=none},ytick style={draw=none},axis x line*=bottom,xmajorgrids=true,grid style={gray!15},tick align=outside,tick label style={font=\scriptsize},label style={font=\scriptsize},title style={font=\small},scale only axis=false]
+\addplot[gray!60,dashed,no marks] coordinates {(0,0.5) (0,4.5)};
+\addplot+[only marks,mark=*,mark size=2pt,blue!65!black,mark options={fill=blue!65!black,draw=blue!65!black},error bars/.cd,x dir=both,x explicit,error bar style={blue!65!black},error mark options={line width=0.7pt}] coordinates {
+(-2.788000000,4) +- (4.239089114,0)
+(-3.830000000,3) +- (1.515193683,0)
+(-8.161333333,2) +- (1.322171261,0)
+(1.250000000,1) +- (1.711655609,0)
+};\end{axis}\end{tikzpicture}\end{minipage}

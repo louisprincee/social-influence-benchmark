@@ -202,7 +202,7 @@ if __name__ == "__main__":
             best_res = spread_ratio
             best_std = spread_ratio_std
             best_epoch = epoch
-            best_seeds = sorted(seeds)
+            best_seeds = sorted(map(int, seeds))
             torch.save(model.state_dict(), os.path.join(save_path, 'model_best_epoch.pt'))
             with open(os.path.join(save_path, 'seeds_best_epoch.json'), 'w', encoding='utf-8') as output:
                 json.dump({

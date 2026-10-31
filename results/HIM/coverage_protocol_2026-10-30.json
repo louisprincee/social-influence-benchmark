@@ -1,0 +1,44 @@
+{
+  "date": "2026-10-30",
+  "study": "HIM-C cumulative coverage extension",
+  "datasets": [
+    "cora_ml",
+    "power_grid",
+    "facebook",
+    "ciao"
+  ],
+  "models": {
+    "cora_ml": [
+      142,
+      143,
+      144
+    ],
+    "power_grid": [
+      142,
+      143,
+      144
+    ],
+    "facebook": [
+      142,
+      143,
+      144
+    ],
+    "ciao": [
+      42,
+      43,
+      44
+    ]
+  },
+  "methods": [
+    "ASW",
+    "HIM-C",
+    "CO"
+  ],
+  "evaluation_seed_base": 200042,
+  "evaluation_rounds": 500,
+  "edge_prior": 0.1,
+  "him_mixture": 0.5,
+  "selection_rule": "HIM-C: q(v,v)=1, q(v,u)=.1*(.5+.5*h(v)) for graph neighbors, where h is reversed average-tied LDO rank percentile. At each step select global maximum marginal cumulative one-hop independent coverage. CO uses the identical greedy surrogate with q=.1 and ignores HIM.",
+  "parameter_policy": "Fixed before evaluating outcomes. Uniform parameters across all four graphs; no evaluation probability bank or test outcomes given to selectors. No parameter sweep or stopping based on performance.",
+  "scope": "Twelve existing checkpoints, same original budgets. New RNG stream evaluates selectors on the unchanged author simulator. This is exploratory reuse of known graphs/encoders, not an unseen-dataset confirmation. Primary contrasts HIM-C-ASW and HIM-C-CO per graph; no pooling across graphs or multiplicity correction. CO is one deterministic set per graph, not three trainings."
+}

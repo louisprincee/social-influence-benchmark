@@ -1,0 +1,102 @@
+"""Course extension: blend geometric ASW attention with open-neighbor Jaccard overlap.
+
+This changes the selector only. It is not an upstream HIM method or a claim of
+literature novelty. The original selector is left unchanged.
+"""
+from __future__ import annotations
+
+import math
+
+import torch
+
+from methods.HIM.seed_selection import (
+    PriorityQueue, adaptive_HBO_window_selection, find_common_nodes,
+)
+from modules.hyperbolic.lorentz_function import Lorentzian_vector, squared_lorentzian_distance
+
+
+def jaccard_overlap(graph, source: int, target: int) -> float:
+    a, b = set(graph.neighbors(source)) - {source}, set(graph.neighbors(target)) - {target}
+    union = len(a | b)
+    return len(a & b) / union if union else 0.0
+
+
+def blend_overlap_weights(geometric: torch.Tensor, overlap: torch.Tensor,
+                          alpha: float = 0.5) -> torch.Tensor:
+    if not math.isfinite(alpha) or not 0 <= alpha <= 1:
+        raise ValueError('alpha must be finite and in [0,1]')
+    if geometric.shape != overlap.shape or geometric.numel() == 0:
+        raise ValueError('weights must have matching nonempty shapes')
+    if not torch.isfinite(geometric).all() or not torch.isfinite(overlap).all():
+        raise ValueError('weights must be finite')
+    if (overlap < 0).any() or (geometric < 0).any():
+        raise ValueError('weights must be nonnegative')
+    total = overlap.sum()
+    if alpha == 0 or total.item() == 0:
+        return geometric.clone()
+    return (1 - alpha) * geometric + alpha * overlap / total
+
+
+@torch.no_grad()
+def select_structural_asw(graph, embs: torch.Tensor, seed_num: int,
+                          w_size: int, alpha: float = 0.5) -> set[int]:
+    """Return k distinct nodes using a frozen embedding and a fixed mixture.
+
+    Candidate restriction, LDO/degree scale and geometric attention match ASW.
+    Only the distribution of that penalty across candidates is changed. With
+    zero overlap evidence the geometric attention is retained.
+    """
+    n = graph.number_of_nodes()
+    if graph.is_directed() or set(graph.nodes) != set(range(n)) or embs.shape[0] != n:
+        raise ValueError('requires an undirected graph with node IDs 0..n-1 matching embeddings')
+    if not 0 <= seed_num <= n or not isinstance(seed_num, int):
+        raise ValueError('invalid seed budget')
+    if not math.isfinite(alpha) or not 0 <= alpha <= 1:
+        raise ValueError('alpha must be finite and in [0,1]')
+    if not torch.isfinite(embs).all():
+        raise ValueError('embeddings must be finite')
+    if seed_num == 0:
+        return set()
+    if seed_num == n:
+        return set(range(n))
+    if w_size < 1:
+        raise ValueError('window must be positive')
+    window = min(int(w_size), n - 1)
+    # Delegate on ordinary budgets to guarantee the published selector's exact
+    # tie/order behavior when the structural component is disabled.
+    if alpha == 0 and seed_num + window < n:
+        return set(adaptive_HBO_window_selection(graph, embs, seed_num, window))
+
+    points = Lorentzian_vector(embs.detach().cpu(), 1.0)
+    origin = torch.zeros_like(points)
+    origin[:, 0] = 1
+    ldo = squared_lorentzian_distance(points, origin)
+    order = torch.argsort(ldo).tolist()
+    queue = PriorityQueue()
+    for node in order[1:window + 1]:
+        queue.add_or_update(node, float(ldo[node]))
+    position, current, selected = window + 1, order[0], set()
+    neighbors = {u: set(graph.neighbors(u)) - {u} for u in graph}
+    for step in range(seed_num):
+        selected.add(current)
+        if step == seed_num - 1:
+            break
+        candidates = find_common_nodes(neighbors[current], queue.entry_finder.keys())
+        if candidates:
+            distances = squared_lorentzian_distance(points[current], points[candidates])
+            geometric = torch.softmax(1 / distances.clamp_min(torch.finfo(distances.dtype).eps), dim=-1)
+            a = neighbors[current]
+            overlap = torch.tensor([
+                len(a & neighbors[v]) / len(a | neighbors[v]) if a or neighbors[v] else 0.
+                for v in candidates
+            ], dtype=geometric.dtype)
+            weights = blend_overlap_weights(geometric, overlap, alpha)
+            scale = float(ldo[current]) / graph.degree(current) if a else 0.
+            for node, weight in zip(candidates, weights.tolist()):
+                queue.add_or_update(node, queue.entry_finder[node][0] + scale * weight)
+        current, _ = queue.pop_key()
+        if position < n:
+            node = order[position]
+            queue.add_or_update(node, float(ldo[node]))
+            position += 1
+    return selected

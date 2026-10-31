@@ -1,0 +1,331 @@
+{
+  "protocol": {
+    "date": "2026-10-30",
+    "study": "HIM-C cumulative coverage extension",
+    "datasets": [
+      "cora_ml",
+      "power_grid",
+      "facebook",
+      "ciao"
+    ],
+    "models": {
+      "cora_ml": [
+        142,
+        143,
+        144
+      ],
+      "power_grid": [
+        142,
+        143,
+        144
+      ],
+      "facebook": [
+        142,
+        143,
+        144
+      ],
+      "ciao": [
+        42,
+        43,
+        44
+      ]
+    },
+    "methods": [
+      "ASW",
+      "HIM-C",
+      "CO"
+    ],
+    "evaluation_seed_base": 200042,
+    "evaluation_rounds": 500,
+    "edge_prior": 0.1,
+    "him_mixture": 0.5,
+    "selection_rule": "HIM-C: q(v,v)=1, q(v,u)=.1*(.5+.5*h(v)) for graph neighbors, where h is reversed average-tied LDO rank percentile. At each step select global maximum marginal cumulative one-hop independent coverage. CO uses the identical greedy surrogate with q=.1 and ignores HIM.",
+    "parameter_policy": "Fixed before evaluating outcomes. Uniform parameters across all four graphs; no evaluation probability bank or test outcomes given to selectors. No parameter sweep or stopping based on performance.",
+    "scope": "Twelve existing checkpoints, same original budgets. New RNG stream evaluates selectors on the unchanged author simulator. This is exploratory reuse of known graphs/encoders, not an unseen-dataset confirmation. Primary contrasts HIM-C-ASW and HIM-C-CO per graph; no pooling across graphs or multiplicity correction. CO is one deterministic set per graph, not three trainings."
+  },
+  "protocol_sha256": "c7c8cc03d90a81e2ed00c3dba33f41b71d14ae28c3e91d99b94886f31e838566",
+  "datasets": {
+    "cora_ml": {
+      "dataset": "cora_ml",
+      "nodes": 2810,
+      "seed_budget": 281,
+      "methods": {
+        "ASW": {
+          "coverage_percent_mean": 38.1070699881376,
+          "per_training_seed": [
+            38.28740213523131,
+            37.81373665480427,
+            38.220071174377225
+          ]
+        },
+        "HIM-C": {
+          "coverage_percent_mean": 37.96697508896798,
+          "per_training_seed": [
+            37.900213523131676,
+            37.981779359430604,
+            38.01893238434164
+          ]
+        },
+        "CO": {
+          "coverage_percent_mean": 38.06619217081851,
+          "per_training_seed": [
+            38.06619217081851,
+            38.06619217081851,
+            38.06619217081851
+          ]
+        }
+      },
+      "contrasts": {
+        "HIM-C-ASW": {
+          "mean_activated": -3.936666666666667,
+          "per_training_seed": [
+            -10.88,
+            4.722,
+            -5.652
+          ],
+          "ci95_t_df2": [
+            -23.66365725293004,
+            15.790323919596705
+          ]
+        },
+        "HIM-C-CO": {
+          "mean_activated": -2.788,
+          "per_training_seed": [
+            -4.664,
+            -2.372,
+            -1.328
+          ],
+          "ci95_t_df2": [
+            -7.027089113733291,
+            1.4510891137332922
+          ]
+        }
+      },
+      "HIM-C_changed_from_ASW": [
+        241,
+        246,
+        245
+      ],
+      "HIM-C_changed_from_CO": [
+        65,
+        51,
+        60
+      ]
+    },
+    "power_grid": {
+      "dataset": "power_grid",
+      "nodes": 4941,
+      "seed_budget": 494,
+      "methods": {
+        "ASW": {
+          "coverage_percent_mean": 18.72348377521419,
+          "per_training_seed": [
+            18.74689334142886,
+            18.655656749645818,
+            18.7679012345679
+          ]
+        },
+        "HIM-C": {
+          "coverage_percent_mean": 20.52499494029549,
+          "per_training_seed": [
+            20.513863590366324,
+            20.538271604938274,
+            20.522849625581866
+          ]
+        },
+        "CO": {
+          "coverage_percent_mean": 20.602509613438574,
+          "per_training_seed": [
+            20.602509613438574,
+            20.602509613438574,
+            20.602509613438574
+          ]
+        }
+      },
+      "contrasts": {
+        "HIM-C-ASW": {
+          "mean_activated": 89.01266666666668,
+          "per_training_seed": [
+            87.306,
+            93.02,
+            86.712
+          ],
+          "ci95_t_df2": [
+            80.36007255966271,
+            97.66526077367064
+          ]
+        },
+        "HIM-C-CO": {
+          "mean_activated": -3.83,
+          "per_training_seed": [
+            -4.38,
+            -3.174,
+            -3.936
+          ],
+          "ci95_t_df2": [
+            -5.3451936831998,
+            -2.3148063168002
+          ]
+        }
+      },
+      "HIM-C_changed_from_ASW": [
+        155,
+        162,
+        146
+      ],
+      "HIM-C_changed_from_CO": [
+        48,
+        49,
+        32
+      ]
+    },
+    "facebook": {
+      "dataset": "facebook",
+      "nodes": 5908,
+      "seed_budget": 590,
+      "methods": {
+        "ASW": {
+          "coverage_percent_mean": 31.85417512976755,
+          "per_training_seed": [
+            31.7478672985782,
+            31.968314150304675,
+            31.84634394041977
+          ]
+        },
+        "HIM-C": {
+          "coverage_percent_mean": 32.203498081697134,
+          "per_training_seed": [
+            32.20968178740691,
+            32.19316181448883,
+            32.20765064319566
+          ]
+        },
+        "CO": {
+          "coverage_percent_mean": 32.3416384563304,
+          "per_training_seed": [
+            32.3416384563304,
+            32.3416384563304,
+            32.3416384563304
+          ]
+        }
+      },
+      "contrasts": {
+        "HIM-C-ASW": {
+          "mean_activated": 20.638,
+          "per_training_seed": [
+            27.284,
+            13.284,
+            21.346
+          ],
+          "ci95_t_df2": [
+            3.182455865990015,
+            38.09354413400999
+          ]
+        },
+        "HIM-C-CO": {
+          "mean_activated": -8.161333333333333,
+          "per_training_seed": [
+            -7.796,
+            -8.772,
+            -7.916
+          ],
+          "ci95_t_df2": [
+            -9.483504594341653,
+            -6.839162072325014
+          ]
+        }
+      },
+      "HIM-C_changed_from_ASW": [
+        558,
+        560,
+        555
+      ],
+      "HIM-C_changed_from_CO": [
+        129,
+        118,
+        124
+      ]
+    },
+    "ciao": {
+      "dataset": "ciao",
+      "nodes": 7317,
+      "seed_budget": 366,
+      "methods": {
+        "ASW": {
+          "coverage_percent_mean": 10.015015261263724,
+          "per_training_seed": [
+            9.999261992619925,
+            9.997457974579746,
+            10.0483258165915
+          ]
+        },
+        "HIM-C": {
+          "coverage_percent_mean": 10.593330599972667,
+          "per_training_seed": [
+            10.602022686893536,
+            10.594642613092798,
+            10.583326499931665
+          ]
+        },
+        "CO": {
+          "coverage_percent_mean": 10.576247095804293,
+          "per_training_seed": [
+            10.576247095804293,
+            10.576247095804293,
+            10.576247095804293
+          ]
+        }
+      },
+      "contrasts": {
+        "HIM-C-ASW": {
+          "mean_activated": 42.315333333333335,
+          "per_training_seed": [
+            44.104,
+            43.696,
+            39.146
+          ],
+          "ci95_t_df2": [
+            35.47825643314211,
+            49.15241023352456
+          ]
+        },
+        "HIM-C-CO": {
+          "mean_activated": 1.25,
+          "per_training_seed": [
+            1.886,
+            1.346,
+            0.518
+          ],
+          "ci95_t_df2": [
+            -0.46165560884696744,
+            2.9616556088469674
+          ]
+        }
+      },
+      "HIM-C_changed_from_ASW": [
+        274,
+        216,
+        251
+      ],
+      "HIM-C_changed_from_CO": [
+        15,
+        9,
+        12
+      ]
+    }
+  },
+  "run_artifacts": [
+    "coverage_cora_ml_s142_2026-10-30.json",
+    "coverage_cora_ml_s143_2026-10-30.json",
+    "coverage_cora_ml_s144_2026-10-30.json",
+    "coverage_power_grid_s142_2026-10-30.json",
+    "coverage_power_grid_s143_2026-10-30.json",
+    "coverage_power_grid_s144_2026-10-30.json",
+    "coverage_facebook_s142_2026-10-30.json",
+    "coverage_facebook_s143_2026-10-30.json",
+    "coverage_facebook_s144_2026-10-30.json",
+    "coverage_ciao_s42_2026-10-30.json",
+    "coverage_ciao_s43_2026-10-30.json",
+    "coverage_ciao_s44_2026-10-30.json"
+  ]
+}

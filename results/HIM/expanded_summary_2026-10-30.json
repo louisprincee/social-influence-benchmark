@@ -1,0 +1,384 @@
+{
+  "protocol": {
+    "date": "2026-10-30",
+    "datasets": [
+      "cora_ml",
+      "power_grid",
+      "facebook"
+    ],
+    "training_seeds": [
+      142,
+      143,
+      144
+    ],
+    "diffusion": "WIC",
+    "budget_percent": 10,
+    "training_instances": 30,
+    "max_epochs": 200,
+    "validation_rounds": 100,
+    "patience": 10,
+    "evaluation_seed_base": 100042,
+    "evaluation_rounds": 500,
+    "methods": [
+      "ASW",
+      "MD",
+      "ASW-J",
+      "Degree",
+      "Random"
+    ],
+    "alpha": 0.5,
+    "diagnostic_alphas": [
+      0.0,
+      0.25,
+      0.5,
+      0.75,
+      1.0
+    ],
+    "scope": "Reproduce author-code settings, not exact paper-wide results. Retain supplied probability banks. Power Grid missing sample_ratio explicitly set to 0.2. Alpha diagnostics do not evaluate or tune other alpha values. No optional stopping based on gains."
+  },
+  "protocol_sha256": "c7c7139dbc2bf769ebb392d24e95169428f7721cac1fd0b948b8d95a7e30c772",
+  "datasets": {
+    "cora_ml": {
+      "nodes": 2810,
+      "edges": 7981,
+      "seed_budget": 281,
+      "best_epochs": [
+        39,
+        35,
+        40
+      ],
+      "methods": {
+        "ASW": {
+          "coverage_percent_mean": 38.14400948991696,
+          "coverage_percent_per_training_seed": [
+            38.2726690391459,
+            37.904128113879004,
+            38.255231316725975
+          ]
+        },
+        "MD": {
+          "coverage_percent_mean": 37.64787663107948,
+          "coverage_percent_per_training_seed": [
+            37.575444839857646,
+            37.47722419928825,
+            37.890960854092526
+          ]
+        },
+        "ASW-J": {
+          "coverage_percent_mean": 38.1832265717675,
+          "coverage_percent_per_training_seed": [
+            38.31345195729537,
+            37.91601423487545,
+            38.32021352313167
+          ]
+        },
+        "Degree": {
+          "coverage_percent_mean": 34.36782918149466,
+          "coverage_percent_per_training_seed": [
+            34.36782918149466,
+            34.36782918149466,
+            34.36782918149466
+          ]
+        },
+        "Random": {
+          "coverage_percent_mean": 37.86512455516014,
+          "coverage_percent_per_training_seed": [
+            37.72697508896797,
+            38.14056939501779,
+            37.72782918149466
+          ]
+        }
+      },
+      "ASW-J_changed_nodes": [
+        2,
+        2,
+        1
+      ],
+      "contrasts": {
+        "MD-ASW": {
+          "mean_activated": -13.941333333333333,
+          "per_training_seed": [
+            -19.592,
+            -11.996,
+            -10.236
+          ],
+          "ci95_t_df2": [
+            -26.29275115291682,
+            -1.5899155137498422
+          ]
+        },
+        "ASW-J-ASW": {
+          "mean_activated": 1.102,
+          "per_training_seed": [
+            1.146,
+            0.334,
+            1.826
+          ],
+          "ci95_t_df2": [
+            -0.7535826970410462,
+            2.9575826970410466
+          ]
+        }
+      },
+      "alpha_changed_counts": {
+        "0.0": [
+          0,
+          0,
+          0
+        ],
+        "0.25": [
+          1,
+          0,
+          1
+        ],
+        "0.5": [
+          2,
+          2,
+          1
+        ],
+        "0.75": [
+          4,
+          7,
+          3
+        ],
+        "1.0": [
+          6,
+          7,
+          6
+        ]
+      }
+    },
+    "power_grid": {
+      "nodes": 4941,
+      "edges": 6594,
+      "seed_budget": 494,
+      "best_epochs": [
+        10,
+        8,
+        5
+      ],
+      "methods": {
+        "ASW": {
+          "coverage_percent_mean": 18.72166228158942,
+          "coverage_percent_per_training_seed": [
+            18.742886055454363,
+            18.657437765634487,
+            18.764663023679418
+          ]
+        },
+        "MD": {
+          "coverage_percent_mean": 18.24398569790191,
+          "coverage_percent_per_training_seed": [
+            18.252661404573974,
+            18.199149969641773,
+            18.28014571948998
+          ]
+        },
+        "ASW-J": {
+          "coverage_percent_mean": 18.721824192133848,
+          "coverage_percent_per_training_seed": [
+            18.727383120825746,
+            18.662092693786686,
+            18.77599676178911
+          ]
+        },
+        "Degree": {
+          "coverage_percent_mean": 18.21934831005869,
+          "coverage_percent_per_training_seed": [
+            18.21934831005869,
+            18.21934831005869,
+            18.21934831005869
+          ]
+        },
+        "Random": {
+          "coverage_percent_mean": 15.24316265263442,
+          "coverage_percent_per_training_seed": [
+            15.24120623355596,
+            15.293422384132768,
+            15.194859340214531
+          ]
+        }
+      },
+      "ASW-J_changed_nodes": [
+        6,
+        10,
+        8
+      ],
+      "contrasts": {
+        "MD-ASW": {
+          "mean_activated": -23.602,
+          "per_training_seed": [
+            -24.222,
+            -22.644,
+            -23.94
+          ],
+          "ci95_t_df2": [
+            -25.692522545477384,
+            -21.511477454522616
+          ]
+        },
+        "ASW-J-ASW": {
+          "mean_activated": 0.008000000000000007,
+          "per_training_seed": [
+            -0.766,
+            0.23,
+            0.56
+          ],
+          "ci95_t_df2": [
+            -1.7068324879589964,
+            1.7228324879589965
+          ]
+        }
+      },
+      "alpha_changed_counts": {
+        "0.0": [
+          0,
+          0,
+          0
+        ],
+        "0.25": [
+          4,
+          7,
+          6
+        ],
+        "0.5": [
+          6,
+          10,
+          8
+        ],
+        "0.75": [
+          8,
+          11,
+          14
+        ],
+        "1.0": [
+          11,
+          16,
+          14
+        ]
+      }
+    },
+    "facebook": {
+      "nodes": 5908,
+      "edges": 41729,
+      "seed_budget": 590,
+      "best_epochs": [
+        1,
+        1,
+        1
+      ],
+      "methods": {
+        "ASW": {
+          "coverage_percent_mean": 31.809873617693523,
+          "coverage_percent_per_training_seed": [
+            31.68622207176709,
+            31.945192958700066,
+            31.798205822613404
+          ]
+        },
+        "MD": {
+          "coverage_percent_mean": 31.803148273527423,
+          "coverage_percent_per_training_seed": [
+            31.736120514556532,
+            31.9509817197021,
+            31.72234258632363
+          ]
+        },
+        "ASW-J": {
+          "coverage_percent_mean": 31.831245768449563,
+          "coverage_percent_per_training_seed": [
+            31.72792823290454,
+            31.9403182125931,
+            31.82549085985105
+          ]
+        },
+        "Degree": {
+          "coverage_percent_mean": 26.529079214624236,
+          "coverage_percent_per_training_seed": [
+            26.529079214624236,
+            26.529079214624236,
+            26.529079214624236
+          ]
+        },
+        "Random": {
+          "coverage_percent_mean": 31.91680207628075,
+          "coverage_percent_per_training_seed": [
+            32.060528097494924,
+            31.979417738659443,
+            31.710460392687878
+          ]
+        }
+      },
+      "ASW-J_changed_nodes": [
+        1,
+        1,
+        3
+      ],
+      "contrasts": {
+        "MD-ASW": {
+          "mean_activated": -0.39733333333333337,
+          "per_training_seed": [
+            2.948,
+            0.342,
+            -4.482
+          ],
+          "ci95_t_df2": [
+            -9.76196757374756,
+            8.967300907080892
+          ]
+        },
+        "ASW-J-ASW": {
+          "mean_activated": 1.2626666666666668,
+          "per_training_seed": [
+            2.464,
+            -0.288,
+            1.612
+          ],
+          "ci95_t_df2": [
+            -2.237148667624652,
+            4.762482000957985
+          ]
+        }
+      },
+      "alpha_changed_counts": {
+        "0.0": [
+          0,
+          0,
+          0
+        ],
+        "0.25": [
+          1,
+          1,
+          2
+        ],
+        "0.5": [
+          1,
+          1,
+          3
+        ],
+        "0.75": [
+          2,
+          2,
+          3
+        ],
+        "1.0": [
+          2,
+          3,
+          3
+        ]
+      }
+    }
+  },
+  "run_artifacts": [
+    "expanded_cora_ml_s142_2026-10-30.json",
+    "expanded_cora_ml_s143_2026-10-30.json",
+    "expanded_cora_ml_s144_2026-10-30.json",
+    "expanded_power_grid_s142_2026-10-30.json",
+    "expanded_power_grid_s143_2026-10-30.json",
+    "expanded_power_grid_s144_2026-10-30.json",
+    "expanded_facebook_s142_2026-10-30.json",
+    "expanded_facebook_s143_2026-10-30.json",
+    "expanded_facebook_s144_2026-10-30.json"
+  ],
+  "interpretation": "Author-code WIC reproduction on three original networks at 10% budget. Not a full paper replication. Frozen author probability banks differ by dataset and from the paper description. Alpha fixed at .5; other alphas only seed-set diagnostics. Three independent training runs per network, 500 paired simulation replicates per set. No cross-network averaging. Degree is one deterministic set per network, Random has three sampled sets. Paired initial RNG streams do not ensure edge-level coupling."
+}

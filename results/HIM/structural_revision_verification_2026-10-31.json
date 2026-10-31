@@ -1,0 +1,203 @@
+{
+  "status": "pass",
+  "current_selector_sha256": "87536244a0da0f6bdfb9ee5b40c8a53f379f56aaad5e6abb96e0a04cff350966",
+  "historical_selector_sha256": "9e968264140fc586f7d0255711d9997e9311ae5ea33d3d6bb55400037e641d17",
+  "verifier_sha256": "085c18c51be1c5ffb7ab21dfa13e87b8724501ecdea6a65dbc62f9edbe311929",
+  "records": {
+    "results/HIM/expanded_cora_ml_s142_2026-10-30.json": {
+      "artifact_sha256": "9bf2ac21f8bcb8f75afc3370d5274e2304a971e00b85a96fb3a0e3d457aa2aca",
+      "checkpoint_sha256": "6d11e82b8b9b454644889aabbc12c61c2237f1a243027a59b33336219c8edda0",
+      "graph_sha256": "84ecf8c00111faaeb7254ad80d03d23e336bb50c16995ef09a5686691aeb9316",
+      "probability_sha256": "9ef24c1bf38d0583021a537d7141e9b6b731ddd2d4eb1c6a30468b4d3efd5ac4",
+      "dataset": "cora_ml",
+      "training_seed": 142,
+      "primary_selection_unchanged": true,
+      "methods_reselected": [
+        "ASW",
+        "MD",
+        "ASW-J",
+        "Degree",
+        "Random"
+      ]
+    },
+    "results/HIM/expanded_cora_ml_s143_2026-10-30.json": {
+      "artifact_sha256": "c7194ffe1e6af51ed28361e79ddd9db30d00ca07134ef772b17474b86767473d",
+      "checkpoint_sha256": "75d3d54827eff464dfde950d7866a0dd431e1f522f6c8a131060923275611653",
+      "graph_sha256": "84ecf8c00111faaeb7254ad80d03d23e336bb50c16995ef09a5686691aeb9316",
+      "probability_sha256": "9ef24c1bf38d0583021a537d7141e9b6b731ddd2d4eb1c6a30468b4d3efd5ac4",
+      "dataset": "cora_ml",
+      "training_seed": 143,
+      "primary_selection_unchanged": true,
+      "methods_reselected": [
+        "ASW",
+        "MD",
+        "ASW-J",
+        "Degree",
+        "Random"
+      ]
+    },
+    "results/HIM/expanded_cora_ml_s144_2026-10-30.json": {
+      "artifact_sha256": "cb545ad909c00080dad8ab59b83d76080d0c3517e76dcc9ac9a515ca1f5adaf8",
+      "checkpoint_sha256": "6a03fbd89a1a14f387ef3b8cd1b9edf7abcaee1fbcb0e4f05f720ad9f0c69214",
+      "graph_sha256": "84ecf8c00111faaeb7254ad80d03d23e336bb50c16995ef09a5686691aeb9316",
+      "probability_sha256": "9ef24c1bf38d0583021a537d7141e9b6b731ddd2d4eb1c6a30468b4d3efd5ac4",
+      "dataset": "cora_ml",
+      "training_seed": 144,
+      "primary_selection_unchanged": true,
+      "methods_reselected": [
+        "ASW",
+        "MD",
+        "ASW-J",
+        "Degree",
+        "Random"
+      ]
+    },
+    "results/HIM/expanded_power_grid_s142_2026-10-30.json": {
+      "artifact_sha256": "c5ea4414f1fae8d29278c6803e6bdc295436943e88690f4d306873c5d1b10eb8",
+      "checkpoint_sha256": "2c9419b1015329b1bb8379475911f4f24ff7697ee6eb054c912626f31a85d3b3",
+      "graph_sha256": "ad7ebe777ccce42651030435af14336f811c31b2512835f52e3da510a151088a",
+      "probability_sha256": "2579881d7bd131c99ac42680c8c7de3608eb250c1cf6065f10beb8abce398c9f",
+      "dataset": "power_grid",
+      "training_seed": 142,
+      "primary_selection_unchanged": true,
+      "methods_reselected": [
+        "ASW",
+        "MD",
+        "ASW-J",
+        "Degree",
+        "Random"
+      ]
+    },
+    "results/HIM/expanded_power_grid_s143_2026-10-30.json": {
+      "artifact_sha256": "e22832af492746d5823a2e03b07efc220cc9c8d5932377e9a7f34695d4517244",
+      "checkpoint_sha256": "8efc64b769d888cff2a8e5db0020eb101704ae15426d71f6698387bb3233e5ef",
+      "graph_sha256": "ad7ebe777ccce42651030435af14336f811c31b2512835f52e3da510a151088a",
+      "probability_sha256": "2579881d7bd131c99ac42680c8c7de3608eb250c1cf6065f10beb8abce398c9f",
+      "dataset": "power_grid",
+      "training_seed": 143,
+      "primary_selection_unchanged": true,
+      "methods_reselected": [
+        "ASW",
+        "MD",
+        "ASW-J",
+        "Degree",
+        "Random"
+      ]
+    },
+    "results/HIM/expanded_power_grid_s144_2026-10-30.json": {
+      "artifact_sha256": "79ef17a0a9d454ab7fe9e69779826c37ac84bc1f83d01ba057c9bf8f62cdf2a4",
+      "checkpoint_sha256": "435d2ade06d8dca0de2f768589e2fc934a51e37b6ded09ad2ae2d89e1ccee5d1",
+      "graph_sha256": "ad7ebe777ccce42651030435af14336f811c31b2512835f52e3da510a151088a",
+      "probability_sha256": "2579881d7bd131c99ac42680c8c7de3608eb250c1cf6065f10beb8abce398c9f",
+      "dataset": "power_grid",
+      "training_seed": 144,
+      "primary_selection_unchanged": true,
+      "methods_reselected": [
+        "ASW",
+        "MD",
+        "ASW-J",
+        "Degree",
+        "Random"
+      ]
+    },
+    "results/HIM/expanded_facebook_s142_2026-10-30.json": {
+      "artifact_sha256": "1468f38c142971ed24a261fa5613c6ef31ad09208d8f55700712b527142f4356",
+      "checkpoint_sha256": "bd1f6ad2a506175a3b9efcc16f8fa5b903fcb5fabfb3b887afc4d7db5c4957b9",
+      "graph_sha256": "9d53e2d1398766568d86ee806c66284840a248a7298cc16b2fd7c125504e755d",
+      "probability_sha256": "3801d7e5b2b85b85040d68304ca7234b2404ed14ec462cbf30bb74056a088fe2",
+      "dataset": "facebook",
+      "training_seed": 142,
+      "primary_selection_unchanged": true,
+      "methods_reselected": [
+        "ASW",
+        "MD",
+        "ASW-J",
+        "Degree",
+        "Random"
+      ]
+    },
+    "results/HIM/expanded_facebook_s143_2026-10-30.json": {
+      "artifact_sha256": "c81a7f86c77e0b4b26d1215a4bf6bbcd0eead43bb38eeeccce9ce97460d400c4",
+      "checkpoint_sha256": "83f4a27c537bef5c19b292809e8cc4c720859068d5121ee886063fa2b96677b6",
+      "graph_sha256": "9d53e2d1398766568d86ee806c66284840a248a7298cc16b2fd7c125504e755d",
+      "probability_sha256": "3801d7e5b2b85b85040d68304ca7234b2404ed14ec462cbf30bb74056a088fe2",
+      "dataset": "facebook",
+      "training_seed": 143,
+      "primary_selection_unchanged": true,
+      "methods_reselected": [
+        "ASW",
+        "MD",
+        "ASW-J",
+        "Degree",
+        "Random"
+      ]
+    },
+    "results/HIM/expanded_facebook_s144_2026-10-30.json": {
+      "artifact_sha256": "ab2f63ce2fd6031a6d52b2f2dc73fb8a0b33de38d875212c0d6bd5772007e63f",
+      "checkpoint_sha256": "6925d76f0a6390bc1c7698871a526524762b371f3357c767fe0817934132cab0",
+      "graph_sha256": "9d53e2d1398766568d86ee806c66284840a248a7298cc16b2fd7c125504e755d",
+      "probability_sha256": "3801d7e5b2b85b85040d68304ca7234b2404ed14ec462cbf30bb74056a088fe2",
+      "dataset": "facebook",
+      "training_seed": 144,
+      "primary_selection_unchanged": true,
+      "methods_reselected": [
+        "ASW",
+        "MD",
+        "ASW-J",
+        "Degree",
+        "Random"
+      ]
+    },
+    "results/HIM/structural_asw_ciao_seed42_2026-10-29.json": {
+      "artifact_sha256": "af2723d822f84ef27e83b24467149a476a371544bb78ab014548ad741c40c270",
+      "checkpoint_sha256": "f41a3c0b21caea165d3e7fbe9d8d2e6776e4deb595c0bc1695b18760e9c9ceb6",
+      "graph_sha256": "907a0bde0a2e6cc7ffcfbe5c061e77453d0a27ae4201e1d2c5f5a659604982a7",
+      "probability_sha256": "60335ded6739e26ee339a44d479aef16aec3f03193105b05cb57f883857fc605",
+      "dataset": "ciao",
+      "training_seed": 42,
+      "primary_selection_unchanged": true,
+      "methods_reselected": [
+        "ASW",
+        "MD",
+        "ASW-J",
+        "Degree",
+        "Random"
+      ]
+    },
+    "results/HIM/structural_asw_ciao_seed43_2026-10-29.json": {
+      "artifact_sha256": "4a59d0e40923d18581b2ddf6199486e623a4d28d77c60212d80d5dcfb2c28a07",
+      "checkpoint_sha256": "259646c8379ad2d4240b71fbefbc03351a341b5874de0ff3be02920e011970a0",
+      "graph_sha256": "907a0bde0a2e6cc7ffcfbe5c061e77453d0a27ae4201e1d2c5f5a659604982a7",
+      "probability_sha256": "60335ded6739e26ee339a44d479aef16aec3f03193105b05cb57f883857fc605",
+      "dataset": "ciao",
+      "training_seed": 43,
+      "primary_selection_unchanged": true,
+      "methods_reselected": [
+        "ASW",
+        "MD",
+        "ASW-J",
+        "Degree",
+        "Random"
+      ]
+    },
+    "results/HIM/structural_asw_ciao_seed44_2026-10-29.json": {
+      "artifact_sha256": "628abef4d47b0098ce4ff50fa2e428d05cd09c5e151bbb0437a1de66f1fa116e",
+      "checkpoint_sha256": "78b5ffc1400e86d33b21ddc61256c2eb7cb51d7799d6e15db75b0597f358c909",
+      "graph_sha256": "907a0bde0a2e6cc7ffcfbe5c061e77453d0a27ae4201e1d2c5f5a659604982a7",
+      "probability_sha256": "60335ded6739e26ee339a44d479aef16aec3f03193105b05cb57f883857fc605",
+      "dataset": "ciao",
+      "training_seed": 44,
+      "primary_selection_unchanged": true,
+      "methods_reselected": [
+        "ASW",
+        "MD",
+        "ASW-J",
+        "Degree",
+        "Random"
+      ]
+    }
+  },
+  "checkpoints": 12,
+  "new_diffusion_simulations": 0,
+  "interpretation": "Historical run files and hashes are retained unchanged. Corrected graph-degree normalization and open-neighborhood handling select exactly the same primary seed sets on these 12 checkpoints. Existing outcomes remain applicable to those identical sets, not to arbitrary future revisions or diagnostic alpha values."
+}

@@ -1,0 +1,78 @@
+{
+  "status": "pass",
+  "records": [
+    {
+      "dataset": "cora_ml",
+      "training_seed": 142,
+      "budget": 281,
+      "geometric_only_changed_nodes": 0
+    },
+    {
+      "dataset": "cora_ml",
+      "training_seed": 143,
+      "budget": 281,
+      "geometric_only_changed_nodes": 0
+    },
+    {
+      "dataset": "cora_ml",
+      "training_seed": 144,
+      "budget": 281,
+      "geometric_only_changed_nodes": 0
+    },
+    {
+      "dataset": "power_grid",
+      "training_seed": 142,
+      "budget": 494,
+      "geometric_only_changed_nodes": 0
+    },
+    {
+      "dataset": "power_grid",
+      "training_seed": 143,
+      "budget": 494,
+      "geometric_only_changed_nodes": 0
+    },
+    {
+      "dataset": "power_grid",
+      "training_seed": 144,
+      "budget": 494,
+      "geometric_only_changed_nodes": 0
+    },
+    {
+      "dataset": "facebook",
+      "training_seed": 142,
+      "budget": 590,
+      "geometric_only_changed_nodes": 0
+    },
+    {
+      "dataset": "facebook",
+      "training_seed": 143,
+      "budget": 590,
+      "geometric_only_changed_nodes": 0
+    },
+    {
+      "dataset": "facebook",
+      "training_seed": 144,
+      "budget": 590,
+      "geometric_only_changed_nodes": 0
+    },
+    {
+      "dataset": "ciao",
+      "training_seed": 42,
+      "budget": 366,
+      "geometric_only_changed_nodes": 0
+    },
+    {
+      "dataset": "ciao",
+      "training_seed": 43,
+      "budget": 366,
+      "geometric_only_changed_nodes": 0
+    },
+    {
+      "dataset": "ciao",
+      "training_seed": 44,
+      "budget": 366,
+      "geometric_only_changed_nodes": 0
+    }
+  ],
+  "interpretation": "On all 12 study checkpoints, the refactored selector with structural blending forced off selects exactly the legacy ASW set. This controls numerical/refactoring effects for these checkpoints, not every possible graph or embedding."
+}
